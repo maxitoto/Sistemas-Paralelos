@@ -1,0 +1,52 @@
+CONTEXTO DEL EXPERIMENTO:,Filtro Sobel 750x750
+HARDWARE DETALLADO:,i386 | 4 Cores | Darwin
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+secuencial,1,0.6353,5.3561,5.9915,0.2818,1.00x,100.0%
+secuencial_traspuesta,1,0.6368,2.9201,3.5568,0.2818,1.68x,168.5%
+numba_cpu_paralelo,1,0.4862,0.3220,0.8082,0.2818,7.41x,741.4%
+numba_cpu_paralelo_traspuesta,1,0.2487,0.5781,0.8268,0.2818,7.25x,724.7%
+numpy_cpu,1,0.0306,0.0284,0.0589,0.2818,101.70x,10170.0%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Filtro Sobel 1500x1500
+HARDWARE DETALLADO:,i386 | 4 Cores | Darwin
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+secuencial,1,2.4407,21.1347,23.5754,0.0600,1.00x,100.0%
+secuencial_traspuesta,1,2.5704,12.7374,15.3078,0.0600,1.54x,154.0%
+numba_cpu_paralelo,1,0.5241,0.3465,0.8706,0.0600,27.08x,2707.9%
+numba_cpu_paralelo_traspuesta,1,0.2749,0.6698,0.9446,0.0600,24.96x,2495.7%
+numpy_cpu,1,0.1009,0.1168,0.2177,0.0600,108.31x,10831.2%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Filtro Sobel 3000x3000
+HARDWARE DETALLADO:,i386 | 4 Cores | Darwin
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+secuencial,1,9.7621,86.4820,96.2441,0.0014,1.00x,100.0%
+secuencial_traspuesta,1,9.7722,55.0919,64.8641,0.0014,1.48x,148.4%
+numba_cpu_paralelo,1,0.5827,0.3738,0.9566,0.0014,100.62x,10061.6%
+numba_cpu_paralelo_traspuesta,1,0.4558,0.8988,1.3546,0.0014,71.05x,7105.1%
+numpy_cpu,1,0.3517,0.4428,0.7945,0.0014,121.14x,12114.1%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Filtro Sobel 6000x6000
+HARDWARE DETALLADO:,i386 | 4 Cores | Darwin
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+secuencial,1,44.1810,341.8122,385.9933,0.0000,1.00x,100.0%
+secuencial_traspuesta,1,41.0713,267.1718,308.2431,0.0000,1.25x,125.2%
+numba_cpu_paralelo,1,0.9294,0.4340,1.3635,0.0000,283.09x,28309.3%
+numba_cpu_paralelo_traspuesta,1,0.7563,1.4813,2.2376,0.0000,172.51x,17250.6%
+numpy_cpu,1,1.2487,2.1931,3.4417,0.0000,112.15x,11215.0%

@@ -1,0 +1,9 @@
+CONTEXTO DEL EXPERIMENTO:,Filtro Sobel sobre Imagen 1920x1080p
+HARDWARE DETALLADO:,i386 | 4 Cores | Darwin
+
+Métrica,Pipeline,Workers,Device,Fase_Critica,T_Critico(s),S_Critico,E_Critica(%),T_Total(s),S_General,E_General(%)
+>>,secuencial,1,CPU,fase2,29.7088,1.00x,100.0%,48.9039,1.00x,100.0%
+>>,secuencial_traspuesta,1,CPU,fase2,20.3882,1.46x,145.7%,39.7616,1.23x,123.0%
+>>,paralelo_numba_traspuesta,1,CPU,fase2,4.4876,6.62x,662.0%,6.8358,7.15x,715.4%
+>>,paralelo_numba,1,CPU,fase2,2.4026,12.37x,1236.5%,4.2035,11.63x,1163.4%
+>>,paralelo_numba_traspuesta,1,CPU,fase2,4.5467,6.53x,653.4%,6.3621,7.69x,768.7%
