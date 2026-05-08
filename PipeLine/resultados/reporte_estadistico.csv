@@ -50,3 +50,46 @@ secuencial_traspuesta,1,41.0713,267.1718,308.2431,0.0000,1.25x,125.2%
 numba_cpu_paralelo,1,0.9294,0.4340,1.3635,0.0000,283.09x,28309.3%
 numba_cpu_paralelo_traspuesta,1,0.7563,1.4813,2.2376,0.0000,172.51x,17250.6%
 numpy_cpu,1,1.2487,2.1931,3.4417,0.0000,112.15x,11215.0%
+
+
+==============================,==============================,==============================
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Filtro Sobel 6000x6000
+HARDWARE DETALLADO:,i386 | 4 Cores | Darwin
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+numba_cpu_paralelo_traspuesta,1,1.1073,1.6836,2.7909,0.0000,138.30x,13830.2%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Filtro Sobel 3000x3000
+HARDWARE DETALLADO:,i386 | 4 Cores | Darwin
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+numba_cpu_paralelo_traspuesta,1,0.5354,0.8649,1.4004,0.0014,68.73x,6872.8%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Filtro Sobel 1500x1500
+HARDWARE DETALLADO:,i386 | 4 Cores | Darwin
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+numba_cpu_paralelo_traspuesta,1,0.4841,0.8365,1.3205,0.0600,17.85x,1785.3%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Filtro Sobel 750x750
+HARDWARE DETALLADO:,i386 | 4 Cores | Darwin
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+numba_cpu_paralelo_traspuesta,1,0.3515,0.7223,1.0738,0.2818,5.58x,558.0%
