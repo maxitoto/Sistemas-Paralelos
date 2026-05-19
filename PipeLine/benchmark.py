@@ -44,7 +44,7 @@ def cargar_baseline_total(input_name):
             return datos.get('total')
         except: return None
 
-# --- NUEVA LÓGICA DE EXPORTACIÓN INTELIGENTE ---
+# --- LÓGICA DE EXPORTACIÓN INTELIGENTE ---
 def obtener_ultimo_contexto(ruta):
     """Lee el CSV para encontrar el último contexto registrado y decidir si crear un bloque nuevo"""
     if not os.path.exists(ruta) or os.path.getsize(ruta) == 0:
@@ -80,14 +80,13 @@ def exportar_csv(ruta, m, num_runs):
             writer.writerow(["HARDWARE DETALLADO:", obtener_info_hardware()])
             writer.writerow(["METODOLOGÍA:", f"Promedio de {num_runs} iteraciones por método"])
             writer.writerow([])
-            # Eliminé la columna "Imagen" ya que es parte del contexto
             writer.writerow([
                 "Método", "Workers", "T_RGB_Promedio(s)", 
                 "T_Sobel_Promedio(s)", "T_Total_Promedio(s)", "%_Blancos", 
                 "Speed-Up", "Performance(%)"
             ])
 
-        # Se escribe la fila de datos normal (sin la imagen)
+        # Se escribe la fila de datos normal
         writer.writerow([
             m['Metodo'], m['Workers'], 
             f"{m['T_RGB']:.4f}", f"{m['T_Sobel']:.4f}", f"{m['T_Total']:.4f}", 
@@ -98,6 +97,15 @@ def exportar_csv(ruta, m, num_runs):
 def ejecutar_pipeline(nombre_pipeline, args):
     print(f"\n>>> EXPERIMENTO: {nombre_pipeline.upper()} | Iteraciones: {args.runs}")
     
+    # Intentar cargar fase 0 (Warm-up / Preprocesamiento no medido)
+    fase_cero = None
+    try:
+        fase_cero = importlib.import_module(f"{nombre_pipeline}.fase0")
+        print("    [Info] Fase 0 detectada (Se ejecutará sin contabilizar tiempo).")
+    except ModuleNotFoundError:
+        pass
+
+    # Cargar fases oficiales (1, 2, 3...)
     fases = []
     num_fase = 1
     while True:
@@ -117,6 +125,11 @@ def ejecutar_pipeline(nombre_pipeline, args):
         t_rgb_corrida = 0.0
         t_sobel_corrida = 0.0
 
+        # Ejecutar fase 0 si existe (no se toman métricas de tiempo)
+        if fase_cero:
+            datos_en_transito = fase_cero.procesar(datos_en_transito, (vars(args), nombre_pipeline))
+
+        # Ejecutar fases oficiales cronometradas
         for idx, modulo in enumerate(fases, start=1):
             inicio = time.perf_counter()
             datos_en_transito = modulo.procesar(datos_en_transito, (vars(args), nombre_pipeline))
@@ -130,7 +143,7 @@ def ejecutar_pipeline(nombre_pipeline, args):
 
         historial_rgb.append(t_rgb_corrida)
         historial_sobel.append(t_sobel_corrida)
-        print(f"    [Run {i+1}] T_Total: {(t_rgb_corrida + t_sobel_corrida):.4f}s")
+        print(f"    [Run {i+1}] T_Total (F1+F2): {(t_rgb_corrida + t_sobel_corrida):.4f}s")
 
     t_rgb_avg = statistics.mean(historial_rgb)
     t_sobel_avg = statistics.mean(historial_sobel)
