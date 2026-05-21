@@ -13,14 +13,13 @@ DIRECTORIO_RESULTADOS = "resultados"
 ARCHIVO_BASELINE = os.path.join(DIRECTORIO_RESULTADOS, "tiempos_base.json")
 ARCHIVO_CSV = os.path.join(DIRECTORIO_RESULTADOS, "reporte_estadistico.csv")
 
-import os
 if os.name == 'nt':
-    # 1. Obligamos a Numba a mirar en estas carpetas específicas
+    # Obligamos a Numba a mirar en estas carpetas específicas
     os.environ['NUMBA_CUDA_DIR'] = r"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.4"
     os.environ['NUMBA_NVVM_LIBDIR'] = r"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.4\nvvm\bin"
     os.environ['NUMBA_LIBDEVICE_DIR'] = r"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.4\nvvm\libdevice"
     
-    # 2. Destrabamos la seguridad de Python para leer DLLs
+    # Destrabamos la seguridad de Python para leer DLLs
     os.add_dll_directory(r"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.4\bin")
     os.add_dll_directory(r"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.4\nvvm\bin")
 
@@ -57,10 +56,8 @@ def cargar_baseline_total(input_name):
 
 # --- LÓGICA DE EXPORTACIÓN INTELIGENTE ---
 def obtener_ultimo_contexto(ruta):
-    """Lee el CSV para encontrar el último contexto registrado y decidir si crear un bloque nuevo"""
     if not os.path.exists(ruta) or os.path.getsize(ruta) == 0:
         return None
-    
     ultimo_contexto = None
     with open(ruta, 'r', encoding='utf-8') as f:
         reader = csv.reader(f)
@@ -72,8 +69,6 @@ def obtener_ultimo_contexto(ruta):
 def exportar_csv(ruta, m, num_runs):
     ultimo_contexto = obtener_ultimo_contexto(ruta)
     contexto_actual = m['Contexto']
-    
-    # Si no hay archivo, o si el contexto cambió, forzamos un nuevo encabezado
     necesita_encabezado = (ultimo_contexto != contexto_actual)
     
     with open(ruta, mode='a', newline='', encoding='utf-8') as f:
@@ -81,10 +76,9 @@ def exportar_csv(ruta, m, num_runs):
         
         if necesita_encabezado:
             if ultimo_contexto is not None:
-                # Si ya había datos de otro contexto, dejamos filas en blanco para separar visualmente
                 writer.writerow([])
                 writer.writerow([])
-                writer.writerow(["="*30, "="*30, "="*30]) # Línea divisoria
+                writer.writerow(["="*30, "="*30, "="*30]) 
                 writer.writerow([])
 
             writer.writerow(["CONTEXTO DEL EXPERIMENTO:", contexto_actual])
@@ -92,15 +86,15 @@ def exportar_csv(ruta, m, num_runs):
             writer.writerow(["METODOLOGÍA:", f"Promedio de {num_runs} iteraciones por método"])
             writer.writerow([])
             writer.writerow([
-                "Método", "Workers", "T_RGB_Promedio(s)", 
-                "T_Sobel_Promedio(s)", "T_Total_Promedio(s)", "%_Blancos", 
-                "Speed-Up", "Performance(%)"
+                "Método", "Workers", "T_Transf_IN(s)", "T_RGB_Promedio(s)", 
+                "T_Sobel_Promedio(s)", "T_Total_Computo(s)", "T_Transf_OUT(s)", 
+                "%_Blancos", "Speed-Up", "Performance(%)"
             ])
 
-        # Se escribe la fila de datos normal
         writer.writerow([
             m['Metodo'], m['Workers'], 
-            f"{m['T_RGB']:.4f}", f"{m['T_Sobel']:.4f}", f"{m['T_Total']:.4f}", 
+            f"{m['T_IN']:.4f}", f"{m['T_RGB']:.4f}", f"{m['T_Sobel']:.4f}", 
+            f"{m['T_Total']:.4f}", f"{m['T_OUT']:.4f}", 
             f"{m['P_Blancos']:.4f}", m['Speedup'], m['Performance']
         ])
 # ------------------------------------------------
@@ -108,7 +102,6 @@ def exportar_csv(ruta, m, num_runs):
 def ejecutar_pipeline(nombre_pipeline, args):
     print(f"\n>>> EXPERIMENTO: {nombre_pipeline.upper()} | Iteraciones: {args.runs}")
     
-    # Intentar cargar fase 0 (Warm-up / Preprocesamiento no medido)
     fase_cero = None
     try:
         fase_cero = importlib.import_module(f"{nombre_pipeline}.fase0")
@@ -116,7 +109,6 @@ def ejecutar_pipeline(nombre_pipeline, args):
     except ModuleNotFoundError:
         pass
 
-    # Cargar fases oficiales (1, 2, 3...)
     fases = []
     num_fase = 1
     while True:
@@ -129,38 +121,60 @@ def ejecutar_pipeline(nombre_pipeline, args):
 
     historial_rgb = []
     historial_sobel = []
+    historial_in = []
+    historial_out = []
     p_blancos_final = 0.0
 
     for i in range(args.runs):
         datos_en_transito = args.input 
         t_rgb_corrida = 0.0
         t_sobel_corrida = 0.0
+        t_in_corrida = 0.0
+        t_out_corrida = 0.0
 
-        # Ejecutar fase 0 si existe (no se toman métricas de tiempo)
         if fase_cero:
-            datos_en_transito = fase_cero.procesar(datos_en_transito, (vars(args), nombre_pipeline))
+            res_fase0 = fase_cero.procesar(datos_en_transito, (vars(args), nombre_pipeline))
+            # Identifica de forma segura si devolvió (datos, tiempo)
+            if isinstance(res_fase0, tuple) and len(res_fase0) == 2 and isinstance(res_fase0[1], float):
+                datos_en_transito, t_in_corrida = res_fase0
+            else:
+                datos_en_transito = res_fase0
 
-        # Ejecutar fases oficiales cronometradas
         for idx, modulo in enumerate(fases, start=1):
             inicio = time.perf_counter()
-            datos_en_transito = modulo.procesar(datos_en_transito, (vars(args), nombre_pipeline))
+            res_modulo = modulo.procesar(datos_en_transito, (vars(args), nombre_pipeline))
             fin = time.perf_counter()
             
             duracion = fin - inicio
-            if idx == 1: t_rgb_corrida = duracion
-            elif idx == 2: t_sobel_corrida = duracion
-            elif idx == 3 and isinstance(datos_en_transito, (int, float)):
-                p_blancos_final = float(datos_en_transito)
+            
+            if idx == 1:
+                t_rgb_corrida = duracion
+                datos_en_transito = res_modulo
+            elif idx == 2:
+                t_sobel_corrida = duracion
+                datos_en_transito = res_modulo
+            elif idx == 3:
+                # Manejo dinámico: averigua si Fase3 pasó una tupla de (Blancos, Tiempo) o solo Blancos
+                if isinstance(res_modulo, tuple) and len(res_modulo) == 2:
+                    p_blancos_final, t_out_corrida = res_modulo
+                else:
+                    p_blancos_final = float(res_modulo)
+                    t_out_corrida = 0.0
 
         historial_rgb.append(t_rgb_corrida)
         historial_sobel.append(t_sobel_corrida)
-        print(f"    [Run {i+1}] T_Total (F1+F2): {(t_rgb_corrida + t_sobel_corrida):.4f}s")
+        historial_in.append(t_in_corrida)
+        historial_out.append(t_out_corrida)
+        
+        print(f"    [Run {i+1}] Transf_IN: {t_in_corrida:.4f}s | T_Cómputo (F1+F2): {(t_rgb_corrida + t_sobel_corrida):.4f}s | Transf_OUT: {t_out_corrida:.4f}s")
 
     t_rgb_avg = statistics.mean(historial_rgb)
     t_sobel_avg = statistics.mean(historial_sobel)
-    t_total_avg = t_rgb_avg + t_sobel_avg
+    t_in_avg = statistics.mean(historial_in)
+    t_out_avg = statistics.mean(historial_out)
+    t_total_avg = t_rgb_avg + t_sobel_avg # Mantenemos el total puro para el Speedup
 
-    return t_rgb_avg, t_sobel_avg, t_total_avg, p_blancos_final
+    return t_in_avg, t_rgb_avg, t_sobel_avg, t_total_avg, t_out_avg, p_blancos_final
 
 def main():
     args = parse_args()
@@ -169,7 +183,7 @@ def main():
     lista_pipelines = [p.strip() for p in args.pipeline.split(",")]
 
     for p_name in lista_pipelines:
-        t_rgb, t_sobel, t_total, p_blancos = ejecutar_pipeline(p_name, args)
+        t_in, t_rgb, t_sobel, t_total, t_out, p_blancos = ejecutar_pipeline(p_name, args)
 
         if args.save_baseline and p_name.lower() == "secuencial":
             guardar_baseline_total(args.input, t_total)
@@ -179,6 +193,7 @@ def main():
 
         def calcular_metricas(base, actual, workers):
             if not base: return "1.00x", "100.0%"
+            if actual <= 0.0: actual = 1e-7  
             s = base / actual
             p = (s / workers) * 100
             return f"{s:.2f}x", f"{p:.1f}%"
@@ -188,12 +203,13 @@ def main():
         metricas = {
             "Contexto": args.contexto, "Metodo": p_name, 
             "Workers": args.workers, 
-            "T_RGB": t_rgb, "T_Sobel": t_sobel, "T_Total": t_total,
+            "T_IN": t_in, "T_RGB": t_rgb, "T_Sobel": t_sobel, 
+            "T_Total": t_total, "T_OUT": t_out,
             "P_Blancos": p_blancos, "Speedup": speedup, "Performance": performance
         }
 
         exportar_csv(ARCHIVO_CSV, metricas, args.runs)
-        print(f" [OK] {p_name} registrado en CSV. Speedup: {speedup}")
+        print(f" [OK] {p_name} registrado. Speedup: {speedup}")
 
 if __name__ == "__main__":
     main()
