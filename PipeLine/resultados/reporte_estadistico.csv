@@ -93,3 +93,251 @@ METODOLOGÍA:,Promedio de 5 iteraciones por método
 
 Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
 numba_cpu_paralelo_traspuesta,1,0.3515,0.7223,1.0738,0.2818,5.58x,558.0%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Numba GPU 750x750 16 16
+HARDWARE DETALLADO:,"Intel64 Family 6 Model 158 Stepping 10, GenuineIntel | 6 Cores | Windows"
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+numba_gpu,1,0.0006,0.0003,0.0008,0.0001,7049.28x,704928.2%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Numba GPU 1500x1500 16 16
+HARDWARE DETALLADO:,"Intel64 Family 6 Model 158 Stepping 10, GenuineIntel | 6 Cores | Windows"
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+numba_gpu,1,0.0013,0.0010,0.0022,0.0000,10590.55x,1059055.2%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Numba GPU 3000x3000 16 16
+HARDWARE DETALLADO:,"Intel64 Family 6 Model 158 Stepping 10, GenuineIntel | 6 Cores | Windows"
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+numba_gpu,1,0.0039,0.0036,0.0075,0.0000,12820.20x,1282020.0%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Numba GPU 6000x6000 16 16
+HARDWARE DETALLADO:,"Intel64 Family 6 Model 158 Stepping 10, GenuineIntel | 6 Cores | Windows"
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+numba_gpu,1,0.0136,0.0149,0.0284,0.0000,13579.94x,1357994.1%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Numba GPU 750x750 16 16
+HARDWARE DETALLADO:,"Intel64 Family 6 Model 158 Stepping 10, GenuineIntel | 6 Cores | Windows"
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+secuencial,1,0.2437,1.8482,2.0919,0.2818,1.00x,100.0%
+numba_gpu,1,0.0006,0.0003,0.0009,0.0001,2452.31x,245231.3%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Numba GPU 1500x1500 16 16
+HARDWARE DETALLADO:,"Intel64 Family 6 Model 158 Stepping 10, GenuineIntel | 6 Cores | Windows"
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+secuencial,1,1.0161,7.4397,8.4558,0.0600,1.00x,100.0%
+numba_gpu,1,0.0060,0.0009,0.0070,0.0000,1216.61x,121661.1%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Numba GPU 3000x3000 16 16
+HARDWARE DETALLADO:,"Intel64 Family 6 Model 158 Stepping 10, GenuineIntel | 6 Cores | Windows"
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+secuencial,1,4.0342,29.8129,33.8471,0.0014,1.00x,100.0%
+numba_gpu,1,0.0039,0.0036,0.0075,0.0000,4540.40x,454040.4%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Numba GPU 6000x6000 16 16
+HARDWARE DETALLADO:,"Intel64 Family 6 Model 158 Stepping 10, GenuineIntel | 6 Cores | Windows"
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+secuencial,1,16.2549,116.9836,133.2385,0.0000,1.00x,100.0%
+numba_gpu,1,0.0136,0.0148,0.0284,0.0000,4686.78x,468678.4%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Numba GPU 750x750 con 8 8
+HARDWARE DETALLADO:,"Intel64 Family 6 Model 158 Stepping 10, GenuineIntel | 6 Cores | Windows"
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+secuencial,1,0.2453,1.8404,2.0857,0.2818,1.00x,100.0%
+numba_gpu,1,0.0005,0.0002,0.0007,0.0001,3063.56x,306355.9%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Numba GPU 1500x1500 con 8 8
+HARDWARE DETALLADO:,"Intel64 Family 6 Model 158 Stepping 10, GenuineIntel | 6 Cores | Windows"
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+secuencial,1,1.0004,7.4291,8.4295,0.0600,1.00x,100.0%
+numba_gpu,1,0.0012,0.0005,0.0017,0.0000,5004.45x,500444.8%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Numba GPU 3000x3000 con 8 8
+HARDWARE DETALLADO:,"Intel64 Family 6 Model 158 Stepping 10, GenuineIntel | 6 Cores | Windows"
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+secuencial,1,4.0057,29.7436,33.7493,0.0014,1.00x,100.0%
+numba_gpu,1,0.0033,0.0018,0.0052,0.0000,6494.69x,649468.7%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Numba GPU 6000x6000 con 8 8
+HARDWARE DETALLADO:,"Intel64 Family 6 Model 158 Stepping 10, GenuineIntel | 6 Cores | Windows"
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+secuencial,1,16.5898,118.7846,135.3745,0.0000,1.00x,100.0%
+numba_gpu,1,0.0123,0.0086,0.0209,0.0000,6468.93x,646893.3%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Numba GPU 750x750 con 32 32
+HARDWARE DETALLADO:,"Intel64 Family 6 Model 158 Stepping 10, GenuineIntel | 6 Cores | Windows"
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+numba_gpu,1,0.0006,0.0004,0.0010,0.0001,1987.98x,198798.2%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Numba GPU 1500x1500 con 32 32
+HARDWARE DETALLADO:,"Intel64 Family 6 Model 158 Stepping 10, GenuineIntel | 6 Cores | Windows"
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+numba_gpu,1,0.0015,0.0015,0.0030,0.0000,2802.30x,280230.2%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Numba GPU 3000x3000 con 32 32
+HARDWARE DETALLADO:,"Intel64 Family 6 Model 158 Stepping 10, GenuineIntel | 6 Cores | Windows"
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+numba_gpu,1,0.0049,0.0059,0.0108,0.0000,3130.66x,313065.9%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Numba GPU 6000x6000 con 32 32
+HARDWARE DETALLADO:,"Intel64 Family 6 Model 158 Stepping 10, GenuineIntel | 6 Cores | Windows"
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+numba_gpu,1,0.0170,0.0242,0.0412,0.0000,3284.51x,328451.4%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Numba GPU 750x750 con 16 8
+HARDWARE DETALLADO:,"Intel64 Family 6 Model 158 Stepping 10, GenuineIntel | 6 Cores | Windows"
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+numba_gpu,1,0.0006,0.0003,0.0009,0.0001,2304.97x,230496.6%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Numba GPU 1500x1500 con 16 8
+HARDWARE DETALLADO:,"Intel64 Family 6 Model 158 Stepping 10, GenuineIntel | 6 Cores | Windows"
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+numba_gpu,1,0.0013,0.0009,0.0022,0.0000,3754.99x,375498.6%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Numba GPU 3000x3000 con 16 8
+HARDWARE DETALLADO:,"Intel64 Family 6 Model 158 Stepping 10, GenuineIntel | 6 Cores | Windows"
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+numba_gpu,1,0.0042,0.0036,0.0078,0.0000,4343.79x,434379.0%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Numba GPU 6000x6000 con 16 8
+HARDWARE DETALLADO:,"Intel64 Family 6 Model 158 Stepping 10, GenuineIntel | 6 Cores | Windows"
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+numba_gpu,1,0.0152,0.0150,0.0302,0.0000,4479.36x,447935.9%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Numba GPU 750x750 con 8 16
+HARDWARE DETALLADO:,"Intel64 Family 6 Model 158 Stepping 10, GenuineIntel | 6 Cores | Windows"
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+numba_gpu,1,0.0006,0.0002,0.0008,0.0001,2681.50x,268150.1%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Numba GPU 1500x1500 con 8 16
+HARDWARE DETALLADO:,"Intel64 Family 6 Model 158 Stepping 10, GenuineIntel | 6 Cores | Windows"
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+numba_gpu,1,0.0011,0.0006,0.0016,0.0000,5130.49x,513048.7%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Numba GPU 3000x3000 con 8 16
+HARDWARE DETALLADO:,"Intel64 Family 6 Model 158 Stepping 10, GenuineIntel | 6 Cores | Windows"
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+numba_gpu,1,0.0033,0.0019,0.0051,0.0000,6582.98x,658298.5%
+
+
+==============================,==============================,==============================
+
+CONTEXTO DEL EXPERIMENTO:,Numba GPU 6000x6000 con 8 16
+HARDWARE DETALLADO:,"Intel64 Family 6 Model 158 Stepping 10, GenuineIntel | 6 Cores | Windows"
+METODOLOGÍA:,Promedio de 5 iteraciones por método
+
+Método,Workers,T_RGB_Promedio(s),T_Sobel_Promedio(s),T_Total_Promedio(s),%_Blancos,Speed-Up,Performance(%)
+numba_gpu,1,0.0106,0.0079,0.0185,0.0000,7316.64x,731664.4%

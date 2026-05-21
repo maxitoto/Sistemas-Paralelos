@@ -13,6 +13,17 @@ DIRECTORIO_RESULTADOS = "resultados"
 ARCHIVO_BASELINE = os.path.join(DIRECTORIO_RESULTADOS, "tiempos_base.json")
 ARCHIVO_CSV = os.path.join(DIRECTORIO_RESULTADOS, "reporte_estadistico.csv")
 
+import os
+if os.name == 'nt':
+    # 1. Obligamos a Numba a mirar en estas carpetas específicas
+    os.environ['NUMBA_CUDA_DIR'] = r"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.4"
+    os.environ['NUMBA_NVVM_LIBDIR'] = r"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.4\nvvm\bin"
+    os.environ['NUMBA_LIBDEVICE_DIR'] = r"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.4\nvvm\libdevice"
+    
+    # 2. Destrabamos la seguridad de Python para leer DLLs
+    os.add_dll_directory(r"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.4\bin")
+    os.add_dll_directory(r"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.4\nvvm\bin")
+
 def parse_args():
     parser = argparse.ArgumentParser(description="Orquestador de Benchmarking")
     parser.add_argument('--contexto', type=str, default="Prueba de Rendimiento")
