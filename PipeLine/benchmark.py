@@ -93,9 +93,9 @@ def exportar_csv(ruta, m, num_runs):
 
         writer.writerow([
             m['Metodo'], m['Workers'], 
-            f"{m['T_IN']:.4f}", f"{m['T_RGB']:.4f}", f"{m['T_Sobel']:.4f}", 
-            f"{m['T_Total']:.4f}", f"{m['T_OUT']:.4f}", 
-            f"{m['P_Blancos']:.4f}", m['Speedup'], m['Performance']
+            f"{m['T_IN']:.8f}", f"{m['T_RGB']:.8f}", f"{m['T_Sobel']:.8f}", 
+            f"{m['T_Total']:.8f}", f"{m['T_OUT']:.8f}", 
+            f"{m['P_Blancos']:.8f}", m['Speedup'], m['Performance']
         ])
 # ------------------------------------------------
 
