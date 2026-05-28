@@ -1,8 +1,9 @@
 # Importamos el kernel precompilado
 from .fase0 import calcular_gris
 
-def procesar(datos, config):
+def procesar(datos_en_transito, config):
     try:
+        datos, t_transfer_in = datos_en_transito
         matriz_rgb, alto, ancho = datos
         
         # Ejecutamos la función ya compilada en C++ por Numba

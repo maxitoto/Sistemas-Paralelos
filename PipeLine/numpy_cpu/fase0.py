@@ -20,4 +20,4 @@ def procesar(imagen_path, config):
         raise ValueError(f"Falla Crítica en Fase 0: {e}")
     
     # Entregamos la matriz lista para que la Fase 1 solo haga matemática pura
-    return matriz_rgb, t_transfer_in
+    return (matriz_rgb, t_transfer_in)

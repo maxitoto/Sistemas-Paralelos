@@ -14,4 +14,5 @@ def procesar(imagen_path, config):
     t_transfer_in = 0
 
     # Retornamos los datos para que Fase 1 inicie sin medir tiempos de I/O
-    return (matriz_rgb, alto, ancho), t_transfer_in
+    datos = matriz_rgb, alto, ancho
+    return (datos, t_transfer_in)

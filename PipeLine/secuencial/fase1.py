@@ -1,7 +1,9 @@
 import numpy as np
 
-def procesar(datos, config):
+def procesar(datos_en_transito, config):
+    datos, t_transfer_in = datos_en_transito
     matriz_rgb, alto, ancho = datos
+
     matrizGris = np.zeros((alto, ancho), dtype=np.uint8)
     
     # Conversión secuencial optimizada

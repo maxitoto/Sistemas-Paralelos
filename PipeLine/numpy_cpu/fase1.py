@@ -1,6 +1,7 @@
 import numpy as np
 
-def procesar(matriz_rgb, config):
+def procesar(datos_en_transito, config):
+    matriz_rgb, t_transfer_in = datos_en_transito
     try:
         # Vectorización: se extraen canales y se multiplican simultáneamente
         r = matriz_rgb[:, :, 0]

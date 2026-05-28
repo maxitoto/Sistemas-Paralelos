@@ -77,4 +77,4 @@ def procesar(imagen_path, config):
         raise ValueError(f"Falla Crítica en Fase 0: {e}")
     
     datos = (matriz_rgb, alto, ancho)
-    return datos, t_transfer_in
+    return (datos, t_transfer_in)
