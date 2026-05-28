@@ -2,27 +2,16 @@ import torch
 import torch.nn.functional as F
 
 def procesar(datos, config):
-    tensor_gris_gpu, device = datos
+    d_img_gris, d_kernel_x, d_kernel_y, device = datos
 
-    # Kernel de Sobel pero en vram
-    kernel_x = torch.tensor(
-        [[[[-1.0, 0.0, 1.0], [-2.0, 0.0, 2.0], [-1.0, 0.0, 1.0]]]],
-        dtype=torch.float32,
-        device=device,
-    )
-    kernel_y = torch.tensor(
-        [[[[1.0, 2.0, 1.0], [0.0, 0.0, 0.0], [-1.0, -2.0, -1.0]]]],
-        dtype=torch.float32,
-        device=device,
-    )
-
-    # Derivadas parciales (padding es porque la imagen es cuadrada)
-    gx = F.conv2d(tensor_gris_gpu, kernel_x, padding=1)
-    gy = F.conv2d(tensor_gris_gpu, kernel_y, padding=1)
+    # Convolución bidimensional hiperoptimizada usando cuDNN
+    gx = F.conv2d(d_img_gris, d_kernel_x, padding=1)
+    gy = F.conv2d(d_img_gris, d_kernel_y, padding=1)
     
-    # Magnitud y límite vectorial
-    tensor_sobel_gpu = torch.sqrt(gx * gx + gy * gy).clamp(0.0, 255.0)
+    # Teorema de Pitágoras y recorte (clamp)
+    d_img_sobel = torch.sqrt(gx * gx + gy * gy).clamp(0.0, 255.0)
     
+    # Sincronizamos para que el orquestador mida el cómputo exacto
     torch.cuda.synchronize()
 
-    return (tensor_gris_gpu, tensor_sobel_gpu)
+    return (d_img_gris, d_img_sobel)

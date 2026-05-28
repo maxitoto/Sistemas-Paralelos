@@ -1,16 +1,18 @@
 import torch
 
 def procesar(datos, config):
-    tensor_rgb_gpu, device = datos
+    d_img_in, d_kernel_x, d_kernel_y, device = datos
 
-    # El tensor tiene forma (1, 3, H, W). 
-    # Separamos los canales Rojo [0], Verde [1] y Azul [2]
-    r = tensor_rgb_gpu[:, 0:1, :, :]
-    g = tensor_rgb_gpu[:, 1:2, :, :]
-    b = tensor_rgb_gpu[:, 2:3, :, :]
+    # Extracción de canales
+    r = d_img_in[:, 0:1, :, :]
+    g = d_img_in[:, 1:2, :, :]
+    b = d_img_in[:, 2:3, :, :]
     
-    tensor_gris_gpu = 0.299 * r + 0.587 * g + 0.114 * b
+    # Cálculo vectorial puro en VRAM (exactamente igual a tu lógica Numba)
+    d_img_gris = 0.299 * r + 0.587 * g + 0.114 * b
     
+    # Obligamos a esperar que termine la matemática antes de detener el reloj del orquestador
     torch.cuda.synchronize()
 
-    return (tensor_gris_gpu, device)
+    # Retornamos el resultado y seguimos arrastrando los kernels pre-alojados
+    return (d_img_gris, d_kernel_x, d_kernel_y, device)

@@ -16,7 +16,7 @@ def procesar(matrices, config):
     matrizGy = tensor_gy.squeeze().numpy()
     matrizSobel = tensor_sobel.squeeze().numpy()
 
-    # Cálculo % de Blancos (vectorizado, mucho más rápido que un bucle for)
+    # Calculamos % de Pixeles blancos (Vectorizado en lugar del ciclo for)
     cantidad_blancos = np.count_nonzero(matrizSobel == 255)
     alto, ancho = matrizGris.shape
     total_pixeles = alto * ancho
@@ -37,5 +37,5 @@ def procesar(matrices, config):
     
     print(f"\n [+] Las 4 imágenes fueron exportadas en la carpeta '{address}/'")
 
-    # Retornamos solo el flotante. El orquestador pondrá T_Transf_OUT en 0.0
+    # Retornamos únicamente el porcentaje
     return porcentaje_blancos
