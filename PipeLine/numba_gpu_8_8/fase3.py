@@ -15,10 +15,7 @@ def procesar(matrices, config):
     args, nombre_pipeline = config
     nombre_imagen = args.get("input").split("/")[-1].split(".")[0]
 
-    cantidad_blancos = white_percentage(matriz_sobrel_cpu)
-    alto, ancho = matriz_sobrel_cpu.shape
-    total_pixeles = alto * ancho
-    porcentaje_blancos = (cantidad_blancos / total_pixeles) * 100.0
+    porcentaje_blancos = white_percentage(matriz_sobrel_cpu)
     
     address = os.path.join(nombre_pipeline, nombre_imagen)
 

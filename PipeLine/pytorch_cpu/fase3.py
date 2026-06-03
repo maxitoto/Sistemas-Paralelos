@@ -5,7 +5,7 @@ import numpy as np
 def procesar(matrices, config):
     # Desempaquetamos los tensores de PyTorch
     tensor_gris, tensor_gx, tensor_gy, tensor_sobel = matrices
-
+    
     args, nombre_pipeline = config
     nombre_imagen = args.get("input").split("/")[-1].split(".")[0]
 

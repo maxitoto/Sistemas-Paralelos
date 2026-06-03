@@ -6,3 +6,6 @@ __pycache__
 .clj-kondo
 .lsp
 path
+.jpg
+.avif
+resultadosMiFoto
