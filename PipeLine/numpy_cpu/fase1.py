@@ -10,8 +10,7 @@ def procesar(datos_en_transito, config):
         
         matrizGris = (0.299 * r) + (0.587 * g) + (0.114 * b)
 
-        # Aseguramos el rango y pasamos a uint8 (exactamente tu lógica original)
-        matrizGris = np.clip(matrizGris, 0, 255).astype(np.uint8)
+        matrizGris = np.clip(matrizGris, 0, 255).astype(np.float32)
 
     except Exception as e:
         raise ValueError(f"Falla Crítica en Fase 1: {e}")

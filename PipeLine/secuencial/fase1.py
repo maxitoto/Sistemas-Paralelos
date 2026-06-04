@@ -1,17 +1,16 @@
 import numpy as np
 
 def procesar(datos_en_transito, config):
-    datos, t_transfer_in = datos_en_transito
-    matriz_rgb, alto, ancho = datos
+    matriz_rgb, t_transfer_in = datos_en_transito
+    try:
 
-    matrizGris = np.zeros((alto, ancho), dtype=np.uint8)
-    
-    # Conversión secuencial optimizada
-    for fil in range(alto):
-        for col in range(ancho):
-            matrizGris[fil, col] = int(
-                matriz_rgb[fil, col, 0] * 0.299 + 
-                matriz_rgb[fil, col, 1] * 0.587 + 
-                matriz_rgb[fil, col, 2] * 0.114
-            )
-    return (matrizGris, alto, ancho)
+        r = matriz_rgb[:, :, 0]
+        g = matriz_rgb[:, :, 1]
+        b = matriz_rgb[:, :, 2]
+        
+        matrizGris = (0.299 * r) + (0.587 * g) + (0.114 * b)
+
+    except Exception as e:
+        raise ValueError(f"Falla Crítica en Fase 1: {e}")
+    t_transfer_in = 0
+    return (matrizGris, t_transfer_in)

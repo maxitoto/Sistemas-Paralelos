@@ -8,7 +8,7 @@ def procesar(imagen_path, config):
     
     # Lectura única compartida
     imagen_ram = pil.open(imagen_path).convert("RGB")
-    matriz_rgb = np.asarray(imagen_ram, dtype=np.uint8)
+    matriz_rgb = np.asarray(imagen_ram, dtype=np.float32)
     alto, ancho = matriz_rgb.shape[:2]
     
     t_transfer_in = 0

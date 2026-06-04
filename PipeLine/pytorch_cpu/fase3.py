@@ -16,11 +16,7 @@ def procesar(matrices, config):
     matrizGy = tensor_gy.squeeze().numpy()
     matrizSobel = tensor_sobel.squeeze().numpy()
 
-    # Calculamos % de Pixeles blancos (Vectorizado en lugar del ciclo for)
-    cantidad_blancos = np.count_nonzero(matrizSobel == 255)
-    alto, ancho = matrizGris.shape
-    total_pixeles = alto * ancho
-    porcentaje_blancos = (float(cantidad_blancos) / total_pixeles) * 100.0
+    porcentaje_blancos = white_percentage(matrizSobel)
     
     address = os.path.join(nombre_pipeline, nombre_imagen)
 
@@ -39,3 +35,8 @@ def procesar(matrices, config):
 
     # Retornamos únicamente el porcentaje
     return porcentaje_blancos
+
+def white_percentage(gray: np.ndarray) -> float:
+    total_pixels = gray.size
+    white_pixels = np.count_nonzero(gray == 255)
+    return float(white_pixels) * 100.0 / float(total_pixels)

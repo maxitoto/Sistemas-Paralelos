@@ -11,18 +11,20 @@ from time import perf_counter
 
 @njit(parallel=True)
 def calcular_gris(matriz_rgb, alto, ancho):
-    matrizGris = np.zeros((alto, ancho), dtype=np.uint8)
+    # Nace en float32 para retener todos los decimales
+    matrizGris = np.zeros((alto, ancho), dtype=np.float32)
     for fil in prange(alto):
         for col in range(ancho):
             r = matriz_rgb[fil, col, 0]
             g = matriz_rgb[fil, col, 1]
             b = matriz_rgb[fil, col, 2]
-            gris = (r * 0.299) + (g * 0.587) + (b * 0.114)
-            matrizGris[fil, col] = int(gris)
+            # Matemática pura sin truncamiento
+            matrizGris[fil, col] = (r * 0.299) + (g * 0.587) + (b * 0.114)
     return matrizGris
 
 @njit(parallel=True)
 def kernel_sobel(matrizGris, alto, ancho):
+    # Nacen directamente en uint8 para optimizar el peso en RAM hacia Fase 3
     matrizGx = np.zeros((alto, ancho), dtype=np.uint8)
     matrizGy = np.zeros((alto, ancho), dtype=np.uint8)
     matrizSobel = np.zeros((alto, ancho), dtype=np.uint8)
@@ -43,9 +45,10 @@ def kernel_sobel(matrizGris, alto, ancho):
             KerGx = (p02 + 2.0 * p12 + p22) - (p00 + 2.0 * p10 + p20)
             KerGy = (p20 + 2.0 * p21 + p22) - (p00 + 2.0 * p01 + p02)
 
-            matrizGx[fil, col] = int(min(abs(KerGx), 255.0))
-            matrizGy[fil, col] = int(min(abs(KerGy), 255.0))
-            matrizSobel[fil, col] = int(min(math.sqrt(KerGx**2 + KerGy**2), 255.0))
+            # Redondeo estadístico y casteo a 8 bits dentro del hilo compilado
+            matrizGx[fil, col] = int(round(min(abs(KerGx), 255.0)))
+            matrizGy[fil, col] = int(round(min(abs(KerGy), 255.0)))
+            matrizSobel[fil, col] = int(round(min(math.sqrt(KerGx**2 + KerGy**2), 255.0)))
             
     return matrizGx, matrizGy, matrizSobel
 
@@ -58,16 +61,13 @@ def procesar(imagen_path, config):
         raise FileExistsError(f"Error: La imagen no fue encontrada \n {imagen_path}")
     
     try:
-        # 1. Carga de imagen en RGB
         imagen_ram = pil.open(imagen_path).convert("RGB")
-        matriz_rgb = np.asarray(imagen_ram, dtype=np.uint8)
+        matriz_rgb = np.asarray(imagen_ram, dtype=np.float32)
         
         alto = matriz_rgb.shape[0]
         ancho = matriz_rgb.shape[1]
 
-        # 2. WARMUP (CALENTAMIENTO Y COMPILACIÓN JIT)
-        # Forzamos a Numba a compilar el código de C++ pasándole los tipos de datos reales.
-        # Esto toma el impacto de compilación aquí, fuera del cronómetro oficial.
+        # WARMUP (CALENTAMIENTO Y COMPILACIÓN JIT)
         _aux_gris = calcular_gris(matriz_rgb, alto, ancho)
         _aux_gx, _aux_gy, _aux_sobel = kernel_sobel(_aux_gris, alto, ancho)
 

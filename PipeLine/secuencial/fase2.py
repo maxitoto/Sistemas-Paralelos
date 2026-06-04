@@ -5,7 +5,7 @@ def procesar(datos, config):
     matrizGris, alto, ancho = datos
     matrizGx = np.zeros((alto, ancho), dtype=np.float32)
     matrizGy = np.zeros((alto, ancho), dtype=np.float32)
-    matrizSobel = np.zeros((alto, ancho), dtype=np.uint8)
+    matrizSobel = np.zeros((alto, ancho), dtype=np.float32)
 
     Gx = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]]
     Gy = [[-1, -2, -1], [0, 0, 0], [1, 2, 1]]
@@ -22,6 +22,11 @@ def procesar(datos, config):
             
             matrizGx[fil, col] = abs(ker_gx)
             matrizGy[fil, col] = abs(ker_gy)
-            matrizSobel[fil, col] = int(min(math.sqrt(ker_gx**2 + ker_gy**2), 255))
+            matrizSobel[fil][col] = int(round(min(math.sqrt(ker_gx**2 + ker_gy**2), 255.0)))
             
-    return (matrizGris, matrizGx, matrizGy, matrizSobel)
+    mGris_uint8 = np.clip(matrizGris, 0, 255).astype(np.uint8)
+    mGx_uint8 = np.clip(matrizGx, 0, 255).astype(np.uint8)
+    mGy_uint8 = np.clip(matrizGy, 0, 255).astype(np.uint8)
+    mSobel_uint8 = np.clip(matrizSobel, 0, 255).astype(np.uint8)
+
+    return (mGris_uint8, mGx_uint8, mGy_uint8, mSobel_uint8)

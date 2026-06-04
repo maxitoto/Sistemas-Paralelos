@@ -32,13 +32,13 @@ def procesar(matrizGris, config):
         matrizGy[1:-1, 1:-1] = np.abs(KerGy)
         matrizSobel[1:-1, 1:-1] = np.sqrt(KerGx**2 + KerGy**2)
 
-        # Recortamos a 255 y convertimos a uint8
-        matrizGx = np.clip(matrizGx, 0, 255).astype(np.uint8)
-        matrizGy = np.clip(matrizGy, 0, 255).astype(np.uint8)
-        matrizSobel = np.clip(matrizSobel, 0, 255).astype(np.uint8)
+        mGris_uint8 = np.clip(np.round(matrizGris_float), 0, 255).astype(np.uint8)
+        mGx_uint8 = np.clip(np.round(matrizGx), 0, 255).astype(np.uint8)
+        mGy_uint8 = np.clip(np.round(matrizGy), 0, 255).astype(np.uint8)
+        mSobel_uint8 = np.clip(np.round(matrizSobel), 0, 255).astype(np.uint8)
 
     except Exception as e:
         raise ValueError(f"Falla Crítica en Fase 2: {e}")
 
     # Retornamos tupla con las 4 matrices para mantener la compatibilidad
-    return (matrizGris, matrizGx, matrizGy, matrizSobel)
+    return (mGris_uint8, mGx_uint8, mGy_uint8, mSobel_uint8)
