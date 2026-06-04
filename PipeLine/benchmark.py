@@ -7,6 +7,7 @@ import csv
 import json
 import platform
 import statistics
+from numba import cuda
 
 # --- CONFIGURACIÓN DE RUTAS ---
 DIRECTORIO_RESULTADOS = "resultados" 
@@ -34,7 +35,24 @@ def parse_args():
     return parser.parse_args()
 
 def obtener_info_hardware():
-    return f"{platform.processor()} | {os.cpu_count()} Cores | {platform.system()}"
+    try:
+        if cuda.is_available():
+            device = cuda.get_current_device()
+            
+            max_threads_per_block = device.MAX_THREADS_PER_BLOCK
+            warp_size = device.WARP_SIZE
+            max_block_dim_x = device.MAX_BLOCK_DIM_X
+            max_block_dim_y = device.MAX_BLOCK_DIM_Y
+            
+            return (f"CPU: {platform.processor()} | {os.cpu_count()} Cores | {platform.system()} \n"
+                    f"GPU: {device.name.decode('utf-8') if hasattr(device.name, 'decode') else device.name} | "
+                    f"{max_threads_per_block} Threads | Warp: {warp_size} | "
+                    f"Max Dim: {max_block_dim_x} x {max_block_dim_y}")
+        else:
+            return f"CPU: {platform.processor()} | {os.cpu_count()} Cores | {platform.system()} \nSin GPU detectada por Numba"
+            
+    except Exception as e:
+        return f"CPU: {platform.processor()} | {os.cpu_count()} Cores | {platform.system()} \nError detectando GPU: {e}"
 
 def guardar_baseline_total(input_name, t_total):
     datos = {}
