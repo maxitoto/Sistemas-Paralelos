@@ -273,88 +273,132 @@ Dado que me fui por las ramas respecto al trabajo pedido original, voy a retomar
 
 ### Todas las tablas
 
+Aquí tienes las tablas solicitadas, formateadas en Markdown, con la columna `Threads Per Block` ajustada y ordenadas de mayor a menor según el `Speed-Up`.
+
 ### Contexto del Experimento: Sobel 750
 
-| Método | Threads per Block | T_Transf_IN(s) | T_RGB_Promedio(s) | T_Sobel_Promedio(s) | T_Total_Computo(s) | T_Transf_OUT(s) | %_Blancos | Speed-Up | Performance(%) |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| **numba_gpu_8_16** | 1 | 0.00170824 | 0.00026254 | 0.00018526 | 0.00044780 | 0.00054986 | 0.00005009 | **11286.99x** | 1128699.1% |
-| **numba_gpu_8_128** | 1 | 0.00141820 | 0.00026494 | 0.00019228 | 0.00045722 | 0.00050216 | 0.00005009 | **11054.45x** | 1105444.8% |
-| **numba_gpu_11_9** | 1 | 0.00159734 | 0.00031876 | 0.00024612 | 0.00056488 | 0.00054120 | 0.00005009 | **8947.59x** | 894759.0% |
-| **numba_gpu_16_16** | 1 | 0.00158522 | 0.00029946 | 0.00028288 | 0.00058234 | 0.00051334 | 0.00005009 | **8679.32x** | 867931.9% |
-| **numba_gpu_8_8** | 1 | 0.00173156 | 0.00037138 | 0.00022248 | 0.00059386 | 0.00060994 | 0.00005009 | **8510.95x** | 851095.3% |
-| **numba_gpu_16_8** | 1 | 0.00173090 | 0.00046790 | 0.00032752 | 0.00079542 | 0.00066950 | 0.00005009 | **6354.27x** | 635427.2% |
-| **numba_gpu_128_8** | 1 | 0.00157948 | 0.00043814 | 0.00044362 | 0.00088176 | 0.00058224 | 0.00005009 | **5732.08x** | 573207.5% |
-| **numba_gpu_32_32** | 1 | 0.00158302 | 0.00042856 | 0.00045924 | 0.00088780 | 0.00056876 | 0.00005009 | **5693.08x** | 569307.8% |
-| **pytorch_gpu** | - | 0.00122548 | 0.00036318 | 0.00052532 | 0.00088850 | 0.00192470 | 0.81528889 | **5688.59x** | 568859.3% |
-| **numba_cpu_paralelo** | - | 0.00000000 | 0.00030182 | 0.00069794 | 0.00099976 | 0.00000000 | 0.28177778 | **5055.53x** | 505552.8% |
-| **pytorch_cpu** | - | 0.00000000 | 0.00951990 | 0.01099460 | 0.02051450 | 0.00000000 | 0.81528889 | **246.38x** | 24637.8% |
-| **numpy_cpu** | - | 0.00000000 | 0.00572444 | 0.02229340 | 0.02801784 | 0.00000000 | 0.28177778 | **180.40x** | 18039.6% |
-| **secuencial** | - | 0.00000000 | 2.61456000 | 2.43975478 | 5.05431478 | 0.00000000 | 0.28177778 | **1.00x** | 100.0% |
-
----
+| Método             | Threads Per Block | T_Transf_IN(s) | T_RGB_Promedio(s) | T_Sobel_Promedio(s) | T_Total_Computo(s) | T_Transf_OUT(s) | %_Blancos  | Speed-Up  | Performance(%) |
+| ------------------ | ----------------- | -------------- | ----------------- | ------------------- | ------------------ | --------------- | ---------- | --------- | -------------- |
+| numba_gpu_8_16     | 128               | 0.00170824     | 0.00026254        | 0.00018526          | 0.00044780         | 0.00054986      | 0.00005009 | 11286.99x | 1128699.1%     |
+| numba_gpu_8_128    | 1024              | 0.00141820     | 0.00026494        | 0.00019228          | 0.00045722         | 0.00050216      | 0.00005009 | 11054.45x | 1105444.8%     |
+| numba_gpu_11_9     | 99                | 0.00159734     | 0.00031876        | 0.00024612          | 0.00056488         | 0.00054120      | 0.00005009 | 8947.59x  | 894759.0%      |
+| numba_gpu_16_16    | 256               | 0.00158522     | 0.00029946        | 0.00028288          | 0.00058234         | 0.00051334      | 0.00005009 | 8679.32x  | 867931.9%      |
+| numba_gpu_8_8      | 64                | 0.00173156     | 0.00037138        | 0.00022248          | 0.00059386         | 0.00060994      | 0.00005009 | 8510.95x  | 851095.3%      |
+| numba_gpu_16_8     | 128               | 0.00173090     | 0.00046790        | 0.00032752          | 0.00079542         | 0.00066950      | 0.00005009 | 6354.27x  | 635427.2%      |
+| numba_gpu_128_8    | 1024              | 0.00157948     | 0.00043814        | 0.00044362          | 0.00088176         | 0.00058224      | 0.00005009 | 5732.08x  | 573207.5%      |
+| numba_gpu_32_32    | 1024              | 0.00158302     | 0.00042856        | 0.00045924          | 0.00088780         | 0.00056876      | 0.00005009 | 5693.08x  | 569307.8%      |
+| pytorch_gpu        | -                 | 0.00122548     | 0.00036318        | 0.00052532          | 0.00088850         | 0.00192470      | 0.81528889 | 5688.59x  | 568859.3%      |
+| numba_cpu_paralelo | -                 | 0.00000000     | 0.00030182        | 0.00069794          | 0.00099976         | 0.00000000      | 0.28177778 | 5055.53x  | 505552.8%      |
+| pytorch_cpu        | -                 | 0.00000000     | 0.00951990        | 0.01099460          | 0.02051450         | 0.00000000      | 0.81528889 | 246.38x   | 24637.8%       |
+| numpy_cpu          | -                 | 0.00000000     | 0.00572444        | 0.02229340          | 0.02801784         | 0.00000000      | 0.28177778 | 180.40x   | 18039.6%       |
+| secuencial         | -                 | 0.00000000     | 2.61456000        | 2.43975478          | 5.05431478         | 0.00000000      | 0.28177778 | 1.00x     | 100.0%         |
 
 ### Contexto del Experimento: Sobel 1500
 
-| Método | Threads per Block | T_Transf_IN(s) | T_RGB_Promedio(s) | T_Sobel_Promedio(s) | T_Total_Computo(s) | T_Transf_OUT(s) | %_Blancos | Speed-Up | Performance(%) |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| **numba_gpu_8_128** | 1 | 0.00518984 | 0.00059334 | 0.00057528 | 0.00116862 | 0.00121392 | 0.00000266 | **17051.95x** | 1705194.9% |
-| **numba_gpu_8_8** | 1 | 0.00554540 | 0.00067870 | 0.00052130 | 0.00120000 | 0.00145016 | 0.00000266 | **16606.04x** | 1660604.0% |
-| **numba_gpu_8_16** | 1 | 0.00518798 | 0.00070722 | 0.00052908 | 0.00123630 | 0.00125998 | 0.00000266 | **16118.46x** | 1611845.7% |
-| **numba_gpu_11_9** | 1 | 0.00502098 | 0.00078968 | 0.00073780 | 0.00152748 | 0.00124684 | 0.00000266 | **13045.83x** | 1304583.2% |
-| **numba_gpu_16_8** | 1 | 0.00481258 | 0.00085050 | 0.00096172 | 0.00181222 | 0.00119206 | 0.00000266 | **10996.04x** | 1099604.3% |
-| **numba_gpu_16_16** | 1 | 0.00488116 | 0.00091848 | 0.00092674 | 0.00184522 | 0.00157592 | 0.00000266 | **10799.39x** | 1079938.9% |
-| **numba_gpu_32_32** | 1 | 0.00503114 | 0.00107114 | 0.00147688 | 0.00254802 | 0.00121604 | 0.00000266 | **7820.68x** | 782068.0% |
-| **numba_gpu_128_8** | 1 | 0.00488564 | 0.00120448 | 0.00141088 | 0.00261536 | 0.00123384 | 0.00000266 | **7619.31x** | 761931.4% |
-| **pytorch_gpu** | - | 0.00441694 | 0.00116664 | 0.00190730 | 0.00307394 | 0.00259638 | 0.32653333 | **6482.64x** | 648264.1% |
-| **numba_cpu_paralelo** | - | 0.00000000 | 0.00141902 | 0.00346934 | 0.00488836 | 0.00000000 | 0.05995556 | **4076.47x** | 407646.9% |
-| **pytorch_cpu** | - | 0.00000000 | 0.03424870 | 0.04322674 | 0.07747544 | 0.00000000 | 0.32653333 | **257.21x** | 25720.7% |
-| **numpy_cpu** | - | 0.00000000 | 0.02151732 | 0.08049956 | 0.10201688 | 0.00000000 | 0.05995556 | **195.33x** | 19533.3% |
-| **secuencial** | - | 0.00000000 | 10.24689544 | 9.68035274 | 19.92724818 | 0.00000000 | 0.05995556 | **1.00x** | 100.0% |
-
----
+| Método             | Threads Per Block | T_Transf_IN(s) | T_RGB_Promedio(s) | T_Sobel_Promedio(s) | T_Total_Computo(s) | T_Transf_OUT(s) | %_Blancos  | Speed-Up  | Performance(%) |
+| ------------------ | ----------------- | -------------- | ----------------- | ------------------- | ------------------ | --------------- | ---------- | --------- | -------------- |
+| numba_gpu_8_8      | 64                | 0.00554540     | 0.00067870        | 0.00052130          | 0.00120000         | 0.00145016      | 0.00000266 | 16606.04x | 1660604.0%     |
+| numba_gpu_8_16     | 128               | 0.00518798     | 0.00070722        | 0.00052908          | 0.00123630         | 0.00125998      | 0.00000266 | 16118.46x | 1611845.7%     |
+| numba_gpu_8_128    | 1024              | 0.00518984     | 0.00059334        | 0.00057528          | 0.00116862         | 0.00121392      | 0.00000266 | 17051.95x | 1705194.9%     |
+| numba_gpu_11_9     | 99                | 0.00502098     | 0.00078968        | 0.00073780          | 0.00152748         | 0.00124684      | 0.00000266 | 13045.83x | 1304583.2%     |
+| numba_gpu_16_8     | 128               | 0.00481258     | 0.00085050        | 0.00096172          | 0.00181222         | 0.00119206      | 0.00000266 | 10996.04x | 1099604.3%     |
+| numba_gpu_16_16    | 256               | 0.00488116     | 0.00091848        | 0.00092674          | 0.00184522         | 0.00157592      | 0.00000266 | 10799.39x | 1079938.9%     |
+| numba_gpu_32_32    | 1024              | 0.00503114     | 0.00107114        | 0.00147688          | 0.00254802         | 0.00121604      | 0.00000266 | 7820.68x  | 782068.0%      |
+| numba_gpu_128_8    | 1024              | 0.00488564     | 0.00120448        | 0.00141088          | 0.00261536         | 0.00123384      | 0.00000266 | 7619.31x  | 761931.4%      |
+| pytorch_gpu        | -                 | 0.00441694     | 0.00116664        | 0.00190730          | 0.00307394         | 0.00259638      | 0.32653333 | 6482.64x  | 648264.1%      |
+| numba_cpu_paralelo | -                 | 0.00000000     | 0.00141902        | 0.00346934          | 0.00488836         | 0.00000000      | 0.05995556 | 4076.47x  | 407646.9%      |
+| pytorch_cpu        | -                 | 0.00000000     | 0.03424870        | 0.04322674          | 0.07747544         | 0.00000000      | 0.32653333 | 257.21x   | 25720.7%       |
+| numpy_cpu          | -                 | 0.00000000     | 0.02151732        | 0.08049956          | 0.10201688         | 0.00000000      | 0.05995556 | 195.33x   | 19533.3%       |
+| secuencial         | -                 | 0.00000000     | 10.24689544       | 9.68035274          | 19.92724818        | 0.00000000      | 0.05995556 | 1.00x     | 100.0%         |
 
 ### Contexto del Experimento: Sobel 3000
 
-| Método | Threads per Block | T_Transf_IN(s) | T_RGB_Promedio(s) | T_Sobel_Promedio(s) | T_Total_Computo(s) | T_Transf_OUT(s) | %_Blancos | Speed-Up | Performance(%) |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| **numba_gpu_8_16** | 1 | 0.01828312 | 0.00202006 | 0.00186312 | 0.00388318 | 0.00454586 | 0.00000002 | **20546.10x** | 2054610.3% |
-| **numba_gpu_8_8** | 1 | 0.01757074 | 0.00206252 | 0.00182314 | 0.00388566 | 0.00399186 | 0.00000002 | **20532.99x** | 2053298.9% |
-| **numba_gpu_8_128** | 1 | 0.01822860 | 0.00184136 | 0.00211360 | 0.00395496 | 0.00379722 | 0.00000002 | **20173.20x** | 2017320.4% |
-| **numba_gpu_11_9** | 1 | 0.01791490 | 0.00264252 | 0.00279262 | 0.00543514 | 0.00411016 | 0.00000002 | **14679.33x** | 1467933.0% |
-| **numba_gpu_16_16** | 1 | 0.01790118 | 0.00283294 | 0.00358214 | 0.00641508 | 0.00396566 | 0.00000002 | **12436.98x** | 1243697.9% |
-| **numba_gpu_16_8** | 1 | 0.01814860 | 0.00291010 | 0.00357694 | 0.00648704 | 0.00395442 | 0.00000002 | **12299.02x** | 1229901.7% |
-| **numba_gpu_128_8** | 1 | 0.01776376 | 0.00394050 | 0.00560816 | 0.00954866 | 0.00382774 | 0.00000002 | **8355.54x** | 835554.0% |
-| **numba_gpu_32_32** | 1 | 0.01811050 | 0.00384726 | 0.00591746 | 0.00976472 | 0.00440604 | 0.00000002 | **8170.66x** | 817066.1% |
-| **pytorch_gpu** | - | 0.01515484 | 0.00426240 | 0.00716192 | 0.01142432 | 0.00482108 | 0.13467778 | **6983.72x** | 698371.7% |
-| **numba_cpu_paralelo** | - | 0.00000000 | 0.00315152 | 0.00895594 | 0.01210746 | 0.00000000 | 0.00136667 | **6589.67x** | 658967.4% |
-| **pytorch_cpu** | - | 0.00000000 | 0.13776866 | 0.16770592 | 0.30547458 | 0.00000000 | 0.13467778 | **261.18x** | 26118.1% |
-| **numpy_cpu** | - | 0.00000000 | 0.08388780 | 0.30466076 | 0.38854856 | 0.00000000 | 0.00136667 | **205.34x** | 20533.9% |
-| **secuencial** | - | 0.00000000 | 40.92268942 | 38.86152532 | 79.78421474 | 0.00000000 | 0.00136667 | **1.00x** | 100.0% |
-
----
+| Método             | Threads Per Block | T_Transf_IN(s) | T_RGB_Promedio(s) | T_Sobel_Promedio(s) | T_Total_Computo(s) | T_Transf_OUT(s) | %_Blancos  | Speed-Up  | Performance(%) |
+| ------------------ | ----------------- | -------------- | ----------------- | ------------------- | ------------------ | --------------- | ---------- | --------- | -------------- |
+| numba_gpu_8_16     | 128               | 0.01828312     | 0.00202006        | 0.00186312          | 0.00388318         | 0.00454586      | 0.00000002 | 20546.10x | 2054610.3%     |
+| numba_gpu_8_8      | 64                | 0.01757074     | 0.00206252        | 0.00182314          | 0.00388566         | 0.00399186      | 0.00000002 | 20532.99x | 2053298.9%     |
+| numba_gpu_8_128    | 1024              | 0.01822860     | 0.00184136        | 0.00211360          | 0.00395496         | 0.00379722      | 0.00000002 | 20173.20x | 2017320.4%     |
+| numba_gpu_11_9     | 99                | 0.01791490     | 0.00264252        | 0.00279262          | 0.00543514         | 0.00411016      | 0.00000002 | 14679.33x | 1467933.0%     |
+| numba_gpu_16_16    | 256               | 0.01790118     | 0.00283294        | 0.00358214          | 0.00641508         | 0.00396566      | 0.00000002 | 12436.98x | 1243697.9%     |
+| numba_gpu_16_8     | 128               | 0.01814860     | 0.00291010        | 0.00357694          | 0.00648704         | 0.00395442      | 0.00000002 | 12299.02x | 1229901.7%     |
+| numba_gpu_128_8    | 1024              | 0.01776376     | 0.00394050        | 0.00560816          | 0.00954866         | 0.00382774      | 0.00000002 | 8355.54x  | 835554.0%      |
+| numba_gpu_32_32    | 1024              | 0.01811050     | 0.00384726        | 0.00591746          | 0.00976472         | 0.00440604      | 0.00000002 | 8170.66x  | 817066.1%      |
+| pytorch_gpu        | -                 | 0.01515484     | 0.00426240        | 0.00716192          | 0.01142432         | 0.00482108      | 0.13467778 | 6983.72x  | 698371.7%      |
+| numba_cpu_paralelo | -                 | 0.00000000     | 0.00315152        | 0.00895594          | 0.01210746         | 0.00000000      | 0.00136667 | 6589.67x  | 658967.4%      |
+| pytorch_cpu        | -                 | 0.00000000     | 0.13776866        | 0.16770592          | 0.30547458         | 0.00000000      | 0.13467778 | 261.18x   | 26118.1%       |
+| numpy_cpu          | -                 | 0.00000000     | 0.08388780        | 0.30466076          | 0.38854856         | 0.00000000      | 0.00136667 | 205.34x   | 20533.9%       |
+| secuencial         | -                 | 0.00000000     | 40.92268942       | 38.86152532         | 79.78421474        | 0.00000000      | 0.00136667 | 1.00x     | 100.0%         |
 
 ### Contexto del Experimento: Sobel 6000
 
-| Método | Threads per Block | T_Transf_IN(s) | T_RGB_Promedio(s) | T_Sobel_Promedio(s) | T_Total_Computo(s) | T_Transf_OUT(s) | %_Blancos | Speed-Up | Performance(%) |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| **numba_gpu_8_128** | 1 | 0.06399330 | 0.00590480 | 0.00712484 | 0.01302964 | 0.01571388 | 0.00000000 | **24466.42x** | 2446642.3% |
-| **numba_gpu_8_16** | 1 | 0.06612894 | 0.00781942 | 0.00707238 | 0.01489180 | 0.01600096 | 0.00000000 | **21406.99x** | 2140699.4% |
-| **numba_gpu_8_8** | 1 | 0.06645610 | 0.00950280 | 0.00794820 | 0.01745100 | 0.01647454 | 0.00000000 | **18267.65x** | 1826764.5% |
-| **numba_gpu_16_16** | 1 | 0.06593700 | 0.00995256 | 0.01218856 | 0.02214112 | 0.01545276 | 0.00000000 | **14398.04x** | 1439803.8% |
-| **numba_gpu_11_9** | 1 | 0.06675938 | 0.01272552 | 0.01013676 | 0.02286228 | 0.01505808 | 0.00000000 | **13943.87x** | 1394387.1% |
-| **numba_gpu_16_8** | 1 | 0.06389310 | 0.01236864 | 0.01260854 | 0.02497718 | 0.01594342 | 0.00000000 | **12763.20x** | 1276319.7% |
-| **numba_gpu_32_32** | 1 | 0.06355664 | 0.01284366 | 0.01973108 | 0.03257474 | 0.01455642 | 0.00000000 | **9786.38x** | 978637.7% |
-| **numba_gpu_128_8** | 1 | 0.06834272 | 0.01623148 | 0.01958406 | 0.03581554 | 0.01584046 | 0.00000000 | **8900.85x** | 890084.8% |
-| **pytorch_gpu** | - | 0.05840752 | 0.01684396 | 0.02451658 | 0.04136054 | 0.03702078 | 0.06665556 | **7707.56x** | 770755.6% |
-| **numba_cpu_paralelo** | - | 0.00000000 | 0.01465646 | 0.03841902 | 0.05307548 | 0.00000000 | 0.00000000 | **6006.33x** | 600632.7% |
-| **pytorch_cpu** | - | 0.00000000 | 0.56755690 | 0.63134968 | 1.19890658 | 0.00000000 | 0.06665556 | **265.90x** | 26590.0% |
-| **numpy_cpu** | - | 0.00000000 | 0.34114818 | 1.24693500 | 1.58808318 | 0.00000000 | 0.00000000 | **200.74x** | 20073.8% |
-| **secuencial** | - | 0.00000000 | 165.24335554 | 153.54532400 | 318.78867954 | 0.00000000 | 0.00000000 | **1.00x** | 100.0% |
-
+| Método             | Threads Per Block | T_Transf_IN(s) | T_RGB_Promedio(s) | T_Sobel_Promedio(s) | T_Total_Computo(s) | T_Transf_OUT(s) | %_Blancos  | Speed-Up  | Performance(%) |
+| ------------------ | ----------------- | -------------- | ----------------- | ------------------- | ------------------ | --------------- | ---------- | --------- | -------------- |
+| numba_gpu_8_128    | 1024              | 0.06399330     | 0.00590480        | 0.00712484          | 0.01302964         | 0.01571388      | 0.00000000 | 24466.42x | 2446642.3%     |
+| numba_gpu_8_16     | 128               | 0.06612894     | 0.00781942        | 0.00707238          | 0.01489180         | 0.01600096      | 0.00000000 | 21406.99x | 2140699.4%     |
+| numba_gpu_8_8      | 64                | 0.06645610     | 0.00950280        | 0.00794820          | 0.01745100         | 0.01647454      | 0.00000000 | 18267.65x | 1826764.5%     |
+| numba_gpu_16_16    | 256               | 0.06593700     | 0.00995256        | 0.01218856          | 0.02214112         | 0.01545276      | 0.00000000 | 14398.04x | 1439803.8%     |
+| numba_gpu_11_9     | 99                | 0.06675938     | 0.01272552        | 0.01013676          | 0.02286228         | 0.01505808      | 0.00000000 | 13943.87x | 1394387.1%     |
+| numba_gpu_16_8     | 128               | 0.06389310     | 0.01236864        | 0.01260854          | 0.02497718         | 0.01594342      | 0.00000000 | 12763.20x | 1276319.7%     |
+| numba_gpu_32_32    | 1024              | 0.06355664     | 0.01284366        | 0.01973108          | 0.03257474         | 0.01455642      | 0.00000000 | 9786.38x  | 978637.7%      |
+| numba_gpu_128_8    | 1024              | 0.06834272     | 0.01623148        | 0.01958406          | 0.03581554         | 0.01584046      | 0.00000000 | 8900.85x  | 890084.8%      |
+| pytorch_gpu        | -                 | 0.05840752     | 0.01684396        | 0.02451658          | 0.04136054         | 0.03702078      | 0.06665556 | 7707.56x  | 770755.6%      |
+| numba_cpu_paralelo | -                 | 0.00000000     | 0.01465646        | 0.03841902          | 0.05307548         | 0.00000000      | 0.00000000 | 6006.33x  | 600632.7%      |
+| pytorch_cpu        | -                 | 0.00000000     | 0.56755690        | 0.63134968          | 1.19890658         | 0.00000000      | 0.06665556 | 265.90x   | 26590.0%       |
+| numpy_cpu          | -                 | 0.00000000     | 0.34114818        | 1.24693500          | 1.58808318         | 0.00000000      | 0.00000000 | 200.74x   | 20073.8%       |
+| secuencial         | -                 | 0.00000000     | 165.24335554      | 153.54532400        | 318.78867954       | 0.00000000      | 0.00000000 | 1.00x     | 100.0%         |
 ### Analisis
 
-- 
+- ¿Qué diferencias de rendimiento se observan entre PyTorch CPU y PyTorch GPU para cada tamaño de imagen?
+
+- ¿Cómo se comparan PyTorch CPU/PyTorch GPU frente a las mejores implementaciones obtenidas en las entregas anteriores?
+- ¿Las salidas de PyTorch (CPU/GPU) son consistentes con Numba/NumPy en términos de bordes detectados y porcentaje de píxeles blancos, y qué factores podrían explicar diferencias?
 
 ## 10. Recursos
 
 [Explicación de Arquitectura de GPU](https://www.youtube.com/watch?v=whPSD8sdx-0)
+
+
+
+# hacer algo con esto
+
+Tu compañero tiene **toda la razón** en este contexto, pero llamarle a PyTorch "solo una cara bonita" es una verdad a medias.
+
+En el mundo de la Computación de Alto Rendimiento (HPC), la regla de oro es: **el nivel de abstracción siempre se paga con rendimiento.**
+
+Para entender por qué tu código Numba destroza a PyTorch en este experimento, y por qué PyTorch no es solo "fácil", me gusta usar la analogía del transporte:
+
+* **Tu código Numba GPU es un coche de Fórmula 1:** Construido a medida, sin asientos para pasajeros, sin aire acondicionado, diseñado exclusivamente para ir del punto A al punto B a la máxima velocidad posible en una pista específica.
+* **PyTorch es un avión de carga Boeing 747:** Gigantesco, complejo, requiere tiempo para encender motores y despegar, pero puede mover 500 toneladas de carga a través del océano.
+
+Si el objetivo es ir al supermercado a comprar pan (aplicar un filtro Sobel a una sola imagen), el Fórmula 1 (Numba) llega, compra y vuelve antes de que el avión (PyTorch) termine de encender las turbinas.
+
+Aquí están las tres razones técnicas exactas por las que esto ocurre:
+
+### 1. Control de la VRAM y Fusión de Kernels (La clave del éxito)
+
+Como vimos al corregir tu código, con Numba tú escribiste un *Kernel* (la función `sobel_cuda`) que le dice a la gráfica exactamente qué hacer píxel por píxel.
+Tu hilo de ejecución en Numba hace esto: **Lee la memoria -> Calcula Gx -> Calcula Gy -> Hace la Raíz Cuadrada -> Escribe el resultado.** Todo ocurre en los registros internos ultrarrápidos de la GPU.
+
+PyTorch, al ser un framework de alto nivel, no puede "fusionar" estas operaciones mágicamente a menos que se lo ordenes explícitamente con compiladores avanzados. Cuando en PyTorch haces `gx = F.conv2d(...)`, PyTorch guarda toda la matriz `gx` en la memoria global de la gráfica. Cuando haces `gy`, vuelve a guardarla. Cuando haces `sqrt(gx2 + gy2)`, tiene que volver a leer ambas matrices desde la memoria global. **Ese tráfico de memoria es lo que hunde el tiempo de PyTorch en algoritmos simples.**
+
+### 2. El "Overhead" (La burocracia de PyTorch)
+
+Cuando llamas a una función en PyTorch, no se ejecuta inmediatamente en la GPU. Primero pasa por un "peaje" en Python y C++ donde el framework se pregunta:
+
+* *"¿Este tensor necesita calcular gradientes para inteligencia artificial (Autograd)?"*
+* *"¿En qué formato está la memoria? ¿Tengo que reordenarla?"*
+* *"¿A qué función de la librería cuDNN de Nvidia debo llamar?"*
+
+Todo este proceso burocrático tarda microsegundos. Tu código Numba, al compilarse en la **Fase 0** (`WARMUP`), se convierte en código de máquina puro (PTX). Cuando el orquestador llama a tu **Fase 2**, no hay burocracia: la orden va directo a los transistores de la GPU.
+
+### 3. La trampa de `cuDNN`
+
+La función `F.conv2d` de PyTorch delega el trabajo a la librería `cuDNN` de Nvidia. Esta librería está hiperoptimizada, pero **para Deep Learning**. Está diseñada para procesar imágenes con 128 canales de color y aplicar 256 filtros simultáneos a un lote (*batch*) de 64 imágenes a la vez.
+Para hacer esto rápido, `cuDNN` usa algoritmos matemáticos extremadamente complejos (como Winograd o la transformación `im2col`). Al pasarle una sola imagen en escala de grises con un filtro 3x3, `cuDNN` gasta más tiempo preparando su compleja maquinaria que lo que tu código Numba tarda en resolverlo con un simple bucle `for`.
+
+### Entonces, ¿es PyTorch solo una cara bonita?
+
+**No, en absoluto.** Si tuvieras que programar una Red Neuronal Convolucional (ResNet) desde cero usando Numba, tendrías que escribir miles de líneas de código matemático, gestionar la propagación hacia atrás (*backpropagation*), derivadas parciales, y la optimización de memoria. Te tomaría meses, y tu versión final en Numba **sería más lenta** que PyTorch, porque cuando los tensores se vuelven masivos, los algoritmos internos de `cuDNN` de Nvidia (escritos en lenguaje ensamblador por ingenieros doctorados) barren a cualquier programador mortal.
+
+**Conclusión de tu Benchmark:**
+Tu compañero tiene razón en que, para algoritmos clásicos de *Computer Vision* (filtros, transformaciones geométricas, umbralización), escribir kernels a medida en **Numba/CUDA o C++ siempre será más rápido** que usar un framework de IA. Has demostrado empíricamente por qué las librerías como OpenCV están escritas en C++/CUDA y no en PyTorch.
