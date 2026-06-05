@@ -4,8 +4,10 @@ numba==0.65.1
 numpy==2.4.6
 Pillow==12.2.0
 thread==2.0.6
-opencv-python
+opencv-python-headless==4.8.1.78
 psutil
 torch
 torchvision
 torchaudio
+pandas
+matplotlib

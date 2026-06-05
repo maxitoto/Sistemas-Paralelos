@@ -37,7 +37,7 @@ def main():
     # ==========================================
     stats = stadistics.GestorEstadisticas(config, metadata)
 
-    perfil_actual = "debug"  # Luego puedes leer esto de sys.argv
+    perfil_actual = "debug"
     herramientas = config["execution_profiles"][perfil_actual]
 
     # ==========================================
@@ -50,9 +50,10 @@ def main():
 
         # Importación dinámica bajo el CONTRATO DE INTERFAZ
         try:
+
             modulo_tool = importlib.import_module(f"tools.{ruta_modulo}.process")
-            # Asumimos que el archivo process.py expone una clase principal Pipeline
-            pipeline = modulo_tool.Pipeline()
+            pipeline = modulo_tool.Pipeline(config) 
+            
         except Exception as e:
             print(f"⚠️ [Advertencia] Error al cargar 'tools.{ruta_modulo}.process'.\nDetalle: {e}")
             continue
@@ -88,12 +89,15 @@ def main():
             stats.tic("computo")
             
             # Fase 1: H2D (Host to Device) - Subir a VRAM
+            print("🔥 Subiendo a VRAM (Fase 1)...")
             lote_dev = pipeline.host_to_device(lote_matrices)
             
             # Fase 2: Computo Puro (El Kernel / Filtro)
+            print("🔥 Procesando (Fase 2)...")
             lote_res_dev = pipeline.procesar(lote_dev)
             
             # Fase 3: D2H (Device to Host) - Bajar a RAM
+            print("🔥 Descargando de VRAM (Fase 3)...")
             lote_res_host = pipeline.device_to_host(lote_res_dev)
             
             t_computo_acum += stats.toc("computo")

@@ -9,7 +9,8 @@
         "max_frames": 0,          
         "target_fps": 30,
         "codec_salida": "mp4v",
-        "name": "video.mp4"
+        "name": "video2.mp4",
+        "filter_type": "grayscale"
     },
     "paths": {
         "input_dir": "static/in",

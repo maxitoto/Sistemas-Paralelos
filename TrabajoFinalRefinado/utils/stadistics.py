@@ -120,7 +120,9 @@ class GestorEstadisticas:
     def obtener_datos_exportacion(self):
         head = [
             ["CONTEXTO DEL EXPERIMENTO:", f"Video {self.metadata['width']}x{self.metadata['height']} | {self.metadata['fps']} FPS Originales"],
-            ["HARDWARE DETALLADO:", f"OS: {platform.system()} {platform.release()} | Arquitectura: {platform.machine()}"],
+            ["HARDWARE DETALLADO:"],
+            ["CPU:", f"OS: {platform.system()} {platform.release()} | Arquitectura: {platform.machine()}"],
+            ["GPU:", f"Driver: {self.metadata['driver']} | Version: {self.metadata['version']} | Capacidad: {self.metadata['gpu_memory']} MB"],
             ["BATCH SIZE:", str(self.config['video_settings']['batch_size'])],
             []
         ]
