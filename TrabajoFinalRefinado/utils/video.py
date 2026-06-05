@@ -1,96 +1,170 @@
-import cv2
-import os
-import glob
+import cv2, os, subprocess, glob, shutil, numpy as np
+try:
+    import ffmpeg
+    HAS_FFMPEG_LIB = True
+except ImportError:
+    HAS_FFMPEG_LIB = False
+    print("⚠️ [Aviso] Librería ffmpeg-python no encontrada. Se usará el ejecutable local directamente.")
 
-def abrir_video(config):
-    """
-    Funcionalidad Aislada 1: Apertura y Metadatos (Carga Perezosa).
-    Lee las propiedades del video sin extraer nada a disco.
-    """
-    # Se actualizó 'nombre_video_entrada' por 'name' según el nuevo config.json
-    input_path = os.path.join(config["paths"]["input_dir"], config["video_settings"]["name"])
-    
-    if not os.path.exists(input_path):
-        raise FileNotFoundError(f"❌ [Error] El archivo de video no existe: {input_path}")
-        
-    cap = cv2.VideoCapture(input_path)
-    if not cap.isOpened():
-        raise RuntimeError(f"❌ [Error] OpenCV no pudo decodificar el video: {input_path}")
-        
-    metadata = {
-        "fps": cap.get(cv2.CAP_PROP_FPS),
-        "total_frames": int(cap.get(cv2.CAP_PROP_FRAME_COUNT)),
-        "width": int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),
-        "height": int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    }
-    
-    print(f"📼 [Video] Abierto '{config['video_settings']['name']}' | Res: {metadata['width']}x{metadata['height']} | {metadata['fps']} FPS | {metadata['total_frames']} frames")
-    
-    return cap, metadata
+def open_video(input_dir):
+    cap = cv2.VideoCapture(input_dir)
+    return cap
 
-def extraer_frames(config, cap, total_frames):
-    """
-    Funcionalidad Aislada 2: Extracción a Disco (ORIGEN).
-    Extrae los frames físicos EXCLUSIVAMENTE en la carpeta 'origin'.
-    """
-    # Ahora apunta a temp_frames_origin_dir
-    frames_origin_path = config["paths"]["temp_frames_origin_dir"]
-    
-    if not os.path.exists(frames_origin_path):
-        os.makedirs(frames_origin_path)
+def split_video(video, temp_frames_origin_dir):
+    if not os.path.exists(temp_frames_origin_dir):
+        os.makedirs(temp_frames_origin_dir)
 
-    print(f"🎞️ [Video] Extrayendo {total_frames} frames a '{frames_origin_path}'...")
+    frames_guardados = 0
     
-    frames_extraidos = 0
-    for frame_count in range(total_frames):
-        ret, frame = cap.read()
-        if not ret:
-            print(f"⚠️ [Video] Advertencia: Lectura interrumpida en el frame {frame_count}.")
-            break
+    while True:
+        ret, frame = video.read()
+        if not ret: 
+            break  # El video terminó
             
-        frame_name = os.path.join(frames_origin_path, f"frame_{frame_count:05d}.jpg")
-        cv2.imwrite(frame_name, frame)
-        frames_extraidos += 1
+        frame_name = f"frame_{frames_guardados:05d}.jpg"
+        frame_path = os.path.join(temp_frames_origin_dir, frame_name)
         
-    cap.release()
-    print(f"✅ [Video] {frames_extraidos} frames originales listos para procesamiento.")
-    
-    return frames_extraidos
+        cv2.imwrite(frame_path, frame)
+        frames_guardados += 1
 
-def ensamblar_video(config):
-    """
-    Funcionalidad Aislada 3: Ensamblado (FILTRADO).
-    Lee los frames de la carpeta 'filtered' y ensambla el video mudo.
-    """
-    # Ahora lee de temp_frames_filtered_dir
-    frames_filtered_path = config["paths"]["temp_frames_filtered_dir"]
-    output_path = os.path.join(config["paths"]["output_dir"], "video_procesado_sin_audio.mp4")
-    
-    fps = config["video_settings"]["target_fps"]
-    codec = config["video_settings"]["codec_salida"]
+    print(f"✅ [Video] Se extrajeron {frames_guardados} frames totales en {temp_frames_origin_dir}")
+    return frames_guardados
 
-    print(f"🎬 [Video] Ensamblando video mudo desde '{frames_filtered_path}'...")
-    
-    search_pattern = os.path.join(frames_filtered_path, "*.jpg")
+def merge_video(temp_frames_filtered_dir, temp_video_mute_dir, code, fps):
+    search_pattern = os.path.join(temp_frames_filtered_dir, "*.jpg")
+    frames_paths = sorted(glob.glob(search_pattern))
+
+    if not frames_paths:
+        print("⚠️ [Video] No se encontraron frames procesados para ensamblar.")
+        return
+
+    primer_frame = cv2.imread(frames_paths[0])
+    alto, ancho, canales = primer_frame.shape 
+    resolucion = (ancho, alto)
+
+    fourcc = cv2.VideoWriter_fourcc(*code)
+    out = cv2.VideoWriter(temp_video_mute_dir, fourcc, fps, resolucion)
+
+    print(f"🎬 [Video] Ensamblando video mudo a {resolucion} @ {fps} FPS...")
+
+    for path in frames_paths:
+        frame = cv2.imread(path)
+        out.write(frame)
+
+    out.release()
+    print("✅ [Video] Ensamblado de frames finalizado.")
+
+def generar_lotes(temp_frames_origin_dir, batch_size):
+
+    search_pattern = os.path.join(temp_frames_origin_dir, "*.jpg")
     frames_paths = sorted(glob.glob(search_pattern))
     
     if not frames_paths:
-        raise FileNotFoundError(f"❌ [Falla Crítica] No se encontraron frames en {frames_filtered_path}. ¿Falló el procesamiento?")
+        print("⚠️ [Lotes] No se encontraron frames para armar lotes.")
+        return
         
-    primer_frame = cv2.imread(frames_paths[0])
-    height, width = primer_frame.shape[:2]
-    es_color = True if len(primer_frame.shape) == 3 else False
+    total_frames = len(frames_paths)
     
-    fourcc = cv2.VideoWriter_fourcc(*codec)
-    out = cv2.VideoWriter(output_path, fourcc, fps, (width, height), isColor=es_color)
-    
-    for frame_path in frames_paths:
-        frame = cv2.imread(frame_path)
+    for i in range(0, total_frames, batch_size):
+        lote_paths = frames_paths[i : i + batch_size]
+        lote_frames = []
         
-        if not es_color:
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        for path in lote_paths:
+            frame = cv2.imread(path)
+            lote_frames.append(frame)
             
-        out.write(frame)
+        batch_np = np.array(lote_frames, dtype=np.uint8)
+        nombres_base = [os.path.basename(p) for p in lote_paths]
         
-    out.release()
-    print(f"✅ [Video] Ensamblado finalizado.")
+        hay_lotes_restantes = (i + batch_size) < total_frames
+
+        yield batch_np, nombres_base, hay_lotes_restantes
+    
+    print("🧹 [Lotes] Sin lotes restantes. Limpiando frames originales...")
+    clear_out(temp_frames_origin_dir)
+
+def guardar_lote(temp_frames_filtered_dir, lote_procesado, nombres_base):
+
+    if not os.path.exists(temp_frames_filtered_dir):
+        os.makedirs(temp_frames_filtered_dir)
+        
+    if not isinstance(lote_procesado, np.ndarray):
+        lote_procesado = np.asarray(lote_procesado)
+
+    for idx, frame in enumerate(lote_procesado):
+        
+        if frame.dtype != np.uint8:
+            frame = frame.astype(np.uint8)
+            
+        out_path = os.path.join(temp_frames_filtered_dir, nombres_base[idx])
+        
+        cv2.imwrite(out_path, frame)
+
+def extract_audio(ruta_video, temp_audio_dir):
+    """
+    Extrae el audio del video. Soporta tanto la librería de Python como el ejecutable.
+    """
+    if not os.path.exists(temp_audio_dir):
+        os.makedirs(temp_audio_dir)
+        
+    output_audio = os.path.join(temp_audio_dir, "audio_original.aac")
+    
+    print("🎵 [Audio] Extrayendo pista de audio...")
+
+    if HAS_FFMPEG_LIB:
+        try:
+            stream = ffmpeg.input(ruta_video)
+            stream = ffmpeg.output(stream, output_audio, **{'c:a': 'aac', 'vn': None})
+            ffmpeg.run(stream, overwrite_output=True, quiet=True)
+            print("✅ [Audio] Extraído con la librería ffmpeg-python.")
+        except Exception as e:
+            print(f"❌ [Audio] Error con la librería: {e}")
+            
+    else:
+        comando = [
+            './ffmpeg', '-y', 
+            '-i', ruta_video, 
+            '-vn',               
+            '-c:a', 'aac',       # Forzar codec AAC
+            output_audio
+        ]
+        try:
+            subprocess.run(comando, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+            print("✅ [Audio] Extraído usando el ejecutable independiente.")
+        except subprocess.CalledProcessError:
+            print("⚠️ [Audio] Falló la extracción con ejecutable (Quizás el video no tiene sonido).")
+
+def merge_audio(temp_video_mute_dir, temp_audio_dir, output_dir):
+    command = [
+        './ffmpeg',
+        '-y',                      # Sobrescribe el archivo si ya existe (muy recomendado)
+        '-i', temp_video_mute_dir,      # Video mudo de entrada
+        '-i', temp_audio_dir,      # Audio extraído de entrada
+        '-c:v', 'copy',            
+        '-c:a', 'aac',             
+        '-strict', 'experimental', 
+        '-map', '0:v:0',           
+        '-map', '1:a:0',           
+        output_dir           # Archivo final resultante
+    ]
+
+    try:
+        subprocess.run(command, check=True)
+        print(f"Audio replaced successfully. Output video: {output_dir}")
+    except subprocess.CalledProcessError as e:
+        print(f"Error during audio replacement: {e}")
+
+def clear_out(temp_dir):
+    try:
+        for filename in os.listdir(temp_dir):
+            file_path = os.path.join(temp_dir, filename)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                pass
+
+    except Exception as e:
+        print(f"Error al limpiar la carpeta temporal: {e}")

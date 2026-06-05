@@ -1,33 +1,29 @@
 {
     "benchmark_settings": {
-        "runs_per_tool": 3,
-        "baseline_tool": "secuencial",
-        "save_baseline": true
+        "time_baseline": 0,
+        "baseline_method": "secuencial"
     },
     "video_settings": {
-        "batch_size": 30,         
-        "max_frames": 0,          
-        "target_fps": 30,
+        "batch_size": 30,
+        "target_fps": 20.0,
         "codec_salida": "mp4v",
-        "name": "video2.mp4",
-        "filter_type": "grayscale"
+        "name": "video5.mp4"
     },
     "paths": {
         "input_dir": "static/in",
         "output_dir": "static/out",
-        "temp_dir": "static/temp",
         "temp_audio_dir": "static/temp/audio",
-        "temp_frames_dir": "static/temp/frames",
         "temp_frames_origin_dir": "static/temp/frames/origin",
         "temp_frames_filtered_dir": "static/temp/frames/filtered",
-        "resultados_dir": "static/res"
+        "temp_video_muted_dir": "static/temp/video_muted",
+        "resultados_dir": "static/res",
+        "tools_dir": "tools"
     },
-    "execution_profiles": {
+
+    "profiles": {
         "debug": {
-            "sec": "secuencial"
         },
         "all": {
-            "sec": "secuencial",
             "numb8": "numba_gpu.t8_8",
             "num16": "numba_gpu.t16_16",
             "num8128": "numba_gpu.t8_128",
@@ -36,7 +32,6 @@
             "torchgpu": "pytorch_gpu"
         },
         "cpu": {
-            "sec": "secuencial",
             "torchcpu": "pytorch_cpu"
         },
         "gpu": {
@@ -45,6 +40,16 @@
             "num16": "numba_gpu.t16_16",
             "num8128": "numba_gpu.t8_128",
             "num1288": "numba_gpu.t128_8"
+        },
+        "numba": {
+            "numb8": "numba_gpu.t8_8",
+            "num16": "numba_gpu.t16_16",
+            "num8128": "numba_gpu.t8_128",
+            "num1288": "numba_gpu.t128_8"
+        },
+        "pytorch": {
+            "torchcpu": "pytorch_cpu",
+            "torchgpu": "pytorch_gpu"
         }
     }
 }

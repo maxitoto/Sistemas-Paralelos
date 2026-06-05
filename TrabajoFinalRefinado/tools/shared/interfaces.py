@@ -20,14 +20,23 @@ class IFase1TransferenciaIn(ABC):
 
 class IFase2Computo(ABC):
     @abstractmethod
-    def procesar(self, lote_device):
+    def procesarComputo1(self, lote_device):
         """
         Fase 2: Ejecuta el núcleo matemático (kernel) sobre los datos.
         Debe retornar el lote procesado (aún en el dispositivo y en float32).
         """
         pass
 
-class IFase3TransferenciaOut(ABC):
+class IFase3Computo(ABC):
+    @abstractmethod
+    def procesarComputo2(self, lote_device):
+        """
+        Fase 3: Ejecuta el núcleo matemático (kernel) sobre los datos.
+        Debe retornar el lote procesado (aún en el dispositivo y en float32).
+        """
+        pass
+
+class IFase4TransferenciaOut(ABC):
     @abstractmethod
     def device_to_host(self, lote_procesado_device):
         """
@@ -36,7 +45,7 @@ class IFase3TransferenciaOut(ABC):
         """
         pass
 
-class IFase4Auxiliar(ABC):
+class IFase5Auxiliar(ABC):
     @abstractmethod
     def auxiliar(self, lote_procesado_device):
         """

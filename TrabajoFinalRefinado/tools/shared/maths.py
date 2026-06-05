@@ -1,33 +1,49 @@
 # tools/shared/maths.py
 
-def _filtro_grayscale(r, g, b):
-    return (r * 0.299) + (g * 0.587) + (b * 0.114)
-
-def _filtro_invert(r, g, b):
-    return (255.0 - r), (255.0 - g), (255.0 - b)
-
-def _filtro_sepia(r, g, b):
-    tr = (r * 0.393) + (g * 0.769) + (b * 0.189)
-    tg = (r * 0.349) + (g * 0.686) + (b * 0.168)
-    tb = (r * 0.272) + (g * 0.534) + (b * 0.131)
-    
-    return (255.0 if tr > 255.0 else tr,
-            255.0 if tg > 255.0 else tg,
-            255.0 if tb > 255.0 else tb)
-
-FILTROS_DISPONIBLES = {
-    "grayscale": {"func": _filtro_grayscale, "canales_out": 1},
-    "invert": {"func": _filtro_invert, "canales_out": 3},
-    "sepia": {"func": _filtro_sepia, "canales_out": 3}
-}
-
-def obtener_filtro(nombre_filtro):
+def oleo(kernel):
     """
-    Devuelve un diccionario con la función pura y sus propiedades estructurales.
+    info util: https://docs.gimp.org/es/gimp-filter-oilify.html
     """
-    info_filtro = FILTROS_DISPONIBLES.get(nombre_filtro)
+    niveles = 20  # Sensibilidad del pincel (cuántos tonos de pintura existen)
     
-    if info_filtro is None:
-        raise ValueError(f"❌ [Error] El filtro '{nombre_filtro}' no existe. Opciones: {list(FILTROS_DISPONIBLES.keys())}")
+    # Listas para agrupar los colores según su nivel de luz
+    conteos = [0] * niveles
+    suma_r = [0.0] * niveles
+    suma_g = [0.0] * niveles
+    suma_b = [0.0] * niveles
+
+    # evaluar a todos los vecinos
+    for fila in kernel:
+        for r, g, b in fila:
+            
+            # Calculamos el promedio de luz del píxel (0.0 a 1.0) 
+            # y lo encasillamos en uno de los 20 "niveles"
+            rf, gf, bf = float(r), float(g), float(b)
+            intensidad = int( (((rf + gf + bf) / 3.0) / 255.0) * (niveles - 1) )
+            
+            # Votamos por ese nivel y sumamos sus colores
+            conteos[intensidad] += 1
+            suma_r[intensidad] += r
+            suma_g[intensidad] += g
+            suma_b[intensidad] += b
+
+    # encontrar la moda
+    max_votos = 0
+    nivel_ganador = 0
+    
+    for i in range(niveles):
+        if conteos[i] > max_votos:
+            max_votos = conteos[i]
+            nivel_ganador = i
+
+    # calcular el color de la pincelada
+    if max_votos == 0:
+        return 0.0, 0.0, 0.0
         
-    return info_filtro
+    # El color final del píxel central es el promedio exacto 
+    # de todos los vecinos que pertenecían al grupo ganador
+    r_final = suma_r[nivel_ganador] / max_votos
+    g_final = suma_g[nivel_ganador] / max_votos
+    b_final = suma_b[nivel_ganador] / max_votos
+    
+    return r_final, g_final, b_final
