@@ -1,0 +1,1 @@
+# para registrar el pico de memoria RAM consumida por tu proceso de Python y vRAM consumida por tu proceso de PyTorch
