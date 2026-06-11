@@ -1,5 +1,6 @@
 import os
 import platform
+import json
 
 try:
     from numba import cuda
@@ -11,7 +12,8 @@ _config = {
     "hardware": "Desconocido",
     "software": "Desconocido",
     "time_baseline": 1.0,
-    "save_baseline": False
+    "save_baseline": False,
+    "save_estimate_baseline": False
 }
 
 _resultados = []
@@ -34,7 +36,7 @@ def searchSoftware():
     """Detecta el Sistema Operativo y la versión de Python."""
     return f"OS: {platform.system()} {platform.release()} | Python: {platform.python_version()}"
 
-def init(hardware, software, time_baseline, save_baseline):
+def init(hardware, software, time_baseline, save_baseline, save_estimate_baseline=False):
     """Inicializa la configuración base del módulo de estadísticas."""
     global _config, _resultados
     _config["hardware"] = hardware
@@ -42,6 +44,7 @@ def init(hardware, software, time_baseline, save_baseline):
     _config["time_baseline"] = float(time_baseline) if time_baseline else 1.0
     _config["save_baseline"] = save_baseline
     _resultados = [] # Limpiamos la lista al iniciar
+    _config["save_estimate_baseline"] = save_estimate_baseline
     
     print(f"📊 [Stats] Inicializado. Baseline de referencia: {_config['time_baseline']}s")
 
@@ -52,12 +55,29 @@ def stats(t_total_disco, t_computo1, t_computo2, t_transfer_out, t_transfer_in, 
     t_total_parcial = t_computo_total + t_total_disco
     t_global = t_total_parcial + t_transfer_in + t_transfer_out
     
-    if _config["save_baseline"] and "secuencial" in nombre_metodo.lower():
+    is_saving = _config["save_baseline"] or _config["save_estimate_baseline"]
+
+    if is_saving and "secuencial" in nombre_metodo.lower():
         
         _config["time_baseline"] = t_global
         speedup = 1.0
         print(f"🔄 [Stats] ¡Nuevo Baseline Registrado en RAM!: {t_global:.4f}s")
         
+        try:
+            with open("config.json", "r", encoding="utf-8") as f:
+                json_data = json.load(f)
+                
+            # Modificamos el valor en el diccionario
+            json_data["benchmark_settings"]["time_baseline"] = round(t_global, 4)
+            
+            # Guardamos el archivo sobreescribiéndolo
+            with open("config.json", "w", encoding="utf-8") as f:
+                json.dump(json_data, f, indent=4)
+                
+            print("💾 [Stats] ¡Baseline guardado permanentemente en config.json!")
+        except Exception as e:
+            print(f"⚠️ [Stats] No se pudo guardar el baseline en config.json: {e}")
+        # ----------------------------------------------
     else:
         if _config["time_baseline"] and _config["time_baseline"] > 0 and t_global > 0:
             speedup = _config["time_baseline"] / t_global

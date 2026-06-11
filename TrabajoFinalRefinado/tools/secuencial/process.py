@@ -1,5 +1,3 @@
-from hmac import new
-
 import numpy as np
 from tools.shared.interfaces import IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Computo, IFase4TransferenciaOut, IFase5Auxiliar
 from tools.shared.maths import oleo
@@ -25,20 +23,13 @@ class Pipeline(IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Computo
         
         lote_salida = np.zeros((batch_size, alto, ancho, canales), dtype=np.float32)
     
-        radio = 2 
 
         for b in range(batch_size):
+            frame = lote_device[b]
             for y in range(alto):
                 for x in range(ancho):
                     
-                    y_min = max(0, y - radio)
-                    y_max = min(alto, y + radio + 1)
-                    x_min = max(0, x - radio)
-                    x_max = min(ancho, x + radio + 1)
-                    
-                    kernel = lote_device[b, y_min:y_max, x_min:x_max]
-                    
-                    r_final, g_final, b_final = oleo(kernel)
+                    r_final, g_final, b_final = oleo(frame, y, x)
 
                     lote_salida[b, y, x, 0] = r_final
                     lote_salida[b, y, x, 1] = g_final

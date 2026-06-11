@@ -1,33 +1,40 @@
-# tools/shared/maths.py
-
-def oleo(kernel):
+def oleo(frame, y, x):
     """
     info util: https://docs.gimp.org/es/gimp-filter-oilify.html
     """
-    niveles = 20  # Sensibilidad del pincel (cuántos tonos de pintura existen)
+    #Sensibilidad del pincel (cuántos tonos de pintura existen)
+    niveles=20
+
+    #Radio de la ventana de vecinos
+    radio=2
+
+    #Dimensiones del frame
+    alto, ancho, _ = frame.shape
+
+    #Limites de la ventana 
+    y_min = max(0, y - radio)
+    y_max = min(alto, y + radio + 1)
+    x_min = max(0, x - radio)
+    x_max = min(ancho, x + radio + 1)
     
-    # Listas para agrupar los colores según su nivel de luz
+    # kernel seguro
+    kernel = frame[y_min:y_max, x_min:x_max]
+
     conteos = [0] * niveles
     suma_r = [0.0] * niveles
     suma_g = [0.0] * niveles
     suma_b = [0.0] * niveles
 
-    # evaluar a todos los vecinos
     for fila in kernel:
         for r, g, b in fila:
-            
-            # Calculamos el promedio de luz del píxel (0.0 a 1.0) 
-            # y lo encasillamos en uno de los 20 "niveles"
             rf, gf, bf = float(r), float(g), float(b)
             intensidad = int( (((rf + gf + bf) / 3.0) / 255.0) * (niveles - 1) )
             
-            # Votamos por ese nivel y sumamos sus colores
             conteos[intensidad] += 1
-            suma_r[intensidad] += r
-            suma_g[intensidad] += g
-            suma_b[intensidad] += b
+            suma_r[intensidad] += rf
+            suma_g[intensidad] += gf
+            suma_b[intensidad] += bf
 
-    # encontrar la moda
     max_votos = 0
     nivel_ganador = 0
     
@@ -36,12 +43,9 @@ def oleo(kernel):
             max_votos = conteos[i]
             nivel_ganador = i
 
-    # calcular el color de la pincelada
     if max_votos == 0:
         return 0.0, 0.0, 0.0
         
-    # El color final del píxel central es el promedio exacto 
-    # de todos los vecinos que pertenecían al grupo ganador
     r_final = suma_r[nivel_ganador] / max_votos
     g_final = suma_g[nivel_ganador] / max_votos
     b_final = suma_b[nivel_ganador] / max_votos

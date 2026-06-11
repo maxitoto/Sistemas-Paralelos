@@ -7,7 +7,7 @@ from utils.variables import obtener_variables
 from utils.video import open_video, extract_audio, split_video, generar_lotes, merge_video, merge_audio, guardar_lote, clear_out
 from utils.stats import stats, addResult, searchHardware, searchSoftware, init, exportar_csv
 
-def ejecutar(work_path, temp_frames_origin_dir, temp_frames_filtered_dir, batch_size):
+def ejecutar(work_path, temp_frames_origin_dir, temp_frames_filtered_dir, batch_size, is_estimating=False):
     tools_dir, work = work_path
     
     try:
@@ -29,6 +29,9 @@ def ejecutar(work_path, temp_frames_origin_dir, temp_frames_filtered_dir, batch_
     t_transfer_out = 0.0
     
     pipeline_obj.calentar()
+
+    if is_estimating: 
+        batch_size = 1
 
     generador = generar_lotes(temp_frames_origin_dir, batch_size)
 
@@ -60,7 +63,7 @@ def ejecutar(work_path, temp_frames_origin_dir, temp_frames_filtered_dir, batch_
         guardar_lote(temp_frames_filtered_dir, lote_final_host, nombres_base)
         t_total_disco += (time.perf_counter() - t_disco_init)
         
-        if not hay_lotes:
+        if not hay_lotes or is_estimating:
             break
             
     pipeline_obj.auxiliar()
@@ -68,7 +71,7 @@ def ejecutar(work_path, temp_frames_origin_dir, temp_frames_filtered_dir, batch_
     return t_total_disco, t_computo1, t_computo2, t_transfer_out, t_transfer_in
 
 def main():
-    input_dir, output_dir, temp_audio_dir, tools_dir, temp_video_mute_dir, temp_frames_origin_dir, temp_frames_filtered_dir, resultados_dir, batch_size, target_fps, codec_salida, name, time_baseline, baseline_method, pipeline, save_baseline = obtener_variables()
+    input_dir, output_dir, temp_audio_dir, tools_dir, temp_video_mute_dir, temp_frames_origin_dir, temp_frames_filtered_dir, resultados_dir, batch_size, batch_size_gpu, target_fps, codec_salida, name, time_baseline, baseline_method, pipeline, save_baseline, save_estimate_baseline = obtener_variables()
 
     #== ayuda de ia
     os.makedirs(temp_video_mute_dir, exist_ok=True)
@@ -85,20 +88,31 @@ def main():
     video_ram = open_video(archivo_video_in)
     extract_audio(archivo_video_in, temp_audio_dir) 
     split_video(video_ram, temp_frames_origin_dir)
+    
+    total_frames = split_video(video_ram, temp_frames_origin_dir)
 
     hardware = searchHardware()
     software = searchSoftware()
 
     init(hardware, software, time_baseline, save_baseline)
 
-    if save_baseline:
+    if save_baseline or save_estimate_baseline:
         pipeline = {"sec": baseline_method, **pipeline}
 
     for alias, ruta_modulo in pipeline.items():
         work_path = (tools_dir, ruta_modulo)
+
+        is_estimating = save_estimate_baseline and "secuencial" in ruta_modulo.lower()
         
-        t_total_disco, t_computo1, t_computo2, t_transfer_out, t_transfer_in = ejecutar(work_path, temp_frames_origin_dir, temp_frames_filtered_dir, batch_size)
+        t_total_disco, t_computo1, t_computo2, t_transfer_out, t_transfer_in = ejecutar(work_path, temp_frames_origin_dir, temp_frames_filtered_dir, batch_size, is_estimating)
         
+        if is_estimating:
+            t_total_disco *= total_frames
+            t_computo1 *= total_frames
+            t_computo2 *= total_frames
+            t_transfer_out *= total_frames
+            t_transfer_in *= total_frames
+
         result = stats(t_total_disco, t_computo1, t_computo2, t_transfer_out, t_transfer_in, nombre_metodo=ruta_modulo)
         addResult(result)
 

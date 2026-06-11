@@ -1,13 +1,14 @@
 {
     "benchmark_settings": {
-        "time_baseline": 0,
+        "time_baseline": 57.8752,
         "baseline_method": "secuencial"
     },
     "video_settings": {
         "batch_size": 30,
+        "batch_size_gpu": 30,
         "target_fps": 20.0,
         "codec_salida": "mp4v",
-        "name": "video5.mp4"
+        "name": "video8.mp4"
     },
     "paths": {
         "input_dir": "static/in",
@@ -19,10 +20,8 @@
         "resultados_dir": "static/res",
         "tools_dir": "tools"
     },
-
     "profiles": {
-        "debug": {
-        },
+        "debug": {},
         "all": {
             "numb8": "numba_gpu.t8_8",
             "num16": "numba_gpu.t16_16",
