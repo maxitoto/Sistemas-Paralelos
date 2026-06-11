@@ -51,12 +51,8 @@ def obtener_variables():
     baseline_method = bechmark_settings["baseline_method"]
 
     pipeline = config["profiles"][args.profiles]
-    
-    if args.save_baseline:
-        save_baseline = True
 
-    if args.save_estimate_baseline:
-        save_estimate_baseline = True
-        
+    save_baseline = args.save_baseline
+    save_estimate_baseline = args.save_estimate_baseline
 
     return input_dir, output_dir, temp_audio_dir, tools_dir, temp_video_mute_dir, temp_frames_origin_dir, temp_frames_filtered_dir, resultados_dir, batch_size, batch_size_gpu, target_fps, codec_salida, name, time_baseline, baseline_method, pipeline, save_baseline, save_estimate_baseline

@@ -10,6 +10,8 @@ path
 *.avif
 resultadosMiFoto
 *.png
+temp/*
 *.mp4
 *.avi
 ffmpeg
+*.aac
