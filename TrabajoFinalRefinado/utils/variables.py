@@ -7,6 +7,7 @@ def parse_args():
     parser.add_argument("--profiles", type=str, required=True, default="debug", help="Tipo de ejecuciones")
     parser.add_argument("--save_baseline", action="store_true", help='Guardar el tiempo secuencial como base')
     parser.add_argument("--save_estimate_baseline", action="store_true", help='Guardar el tiempo estimado como base usando solo un frame (1)')
+    parser.add_argument("--clean_temp", action="store_true", help='Limpiar las carpetas temporales')
     return parser.parse_args()
 
 def obtener_variables():
@@ -54,5 +55,6 @@ def obtener_variables():
 
     save_baseline = args.save_baseline
     save_estimate_baseline = args.save_estimate_baseline
+    clean_temp = args.clean_temp
 
-    return input_dir, output_dir, temp_audio_dir, tools_dir, temp_video_mute_dir, temp_frames_origin_dir, temp_frames_filtered_dir, resultados_dir, batch_size, batch_size_gpu, target_fps, codec_salida, name, time_baseline, baseline_method, pipeline, save_baseline, save_estimate_baseline
+    return input_dir, output_dir, temp_audio_dir, tools_dir, temp_video_mute_dir, temp_frames_origin_dir, temp_frames_filtered_dir, resultados_dir, batch_size, batch_size_gpu, target_fps, codec_salida, name, time_baseline, baseline_method, pipeline, save_baseline, save_estimate_baseline, clean_temp

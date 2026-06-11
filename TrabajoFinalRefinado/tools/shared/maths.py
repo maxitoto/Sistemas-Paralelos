@@ -1,17 +1,14 @@
+from tools.shared.const.parameters import niveles, radio
+
 def oleo(frame, y, x):
     """
     info util: https://docs.gimp.org/es/gimp-filter-oilify.html
     """
-    #Sensibilidad del pincel (cuántos tonos de pintura existen)
-    niveles=20
 
-    #Radio de la ventana de vecinos
-    radio=2
-
-    #Dimensiones del frame
+    # Dimensiones del frame
     alto, ancho, _ = frame.shape
 
-    #Limites de la ventana 
+    # Limites de la ventana 
     y_min = max(0, y - radio)
     y_max = min(alto, y + radio + 1)
     x_min = max(0, x - radio)

@@ -1,21 +1,19 @@
 import math
+from tools.shared.const.parameters import niveles, radio
 from numba import cuda, int32, float32, uint8
 
 @cuda.jit
-def oleo(lote_in, lote_out):
-    niveles = 20
-    radio = 2
+def oleo(frame_in, frame_out):
 
-    # Leemos la forma directamente del tensor principal
-    batch_size = lote_in.shape[0]
-    alto = lote_in.shape[1]
-    ancho = lote_in.shape[2]
+    # Leemos la forma de la imagen individual (Alto, Ancho, Canales)
+    alto = frame_in.shape[0]
+    ancho = frame_in.shape[1]
 
-    # 1. Pedimos las coordenadas exactas de este hilo
-    x, y, b = cuda.grid(3) # ahora usamos tres dimensiones en vez de dos, frames por pixel por pixel. mismo pixel modificado en todos los frames al mismo tiempo
+    # 1. Pedimos las coordenadas en 2D (Eliminamos la dimensión 'b')
+    x, y = cuda.grid(2) 
     
     # 2. Escudo de seguridad
-    if x < ancho and y < alto and b < batch_size:
+    if x < ancho and y < alto:
         
         # 3. RESERVA DE MEMORIA ESTÁTICA PRIVADA
         conteos = cuda.local.array(niveles, dtype=int32)
@@ -39,9 +37,10 @@ def oleo(lote_in, lote_out):
         for vy in range(y_min, y_max):
             for vx in range(x_min, x_max):
                 
-                rf = float32(lote_in[b, vy, vx, 0])
-                gf = float32(lote_in[b, vy, vx, 1])
-                bf = float32(lote_in[b, vy, vx, 2])
+                # Extraemos los colores del pixel (ya no usamos índice 'b')
+                rf = float32(frame_in[vy, vx, 0])
+                gf = float32(frame_in[vy, vx, 1])
+                bf = float32(frame_in[vy, vx, 2])
                 
                 intensidad = int( (((rf + gf + bf) / 3.0) / 255.0) * (niveles - 1) )
                 
@@ -60,10 +59,10 @@ def oleo(lote_in, lote_out):
                 
         # 7. Pincelada Final
         if max_votos == 0:
-            lote_out[b, y, x, 0] = 0
-            lote_out[b, y, x, 1] = 0
-            lote_out[b, y, x, 2] = 0
+            frame_out[y, x, 0] = 0
+            frame_out[y, x, 1] = 0
+            frame_out[y, x, 2] = 0
         else:
-            lote_out[b, y, x, 0] = uint8(suma_r[nivel_ganador] / max_votos)
-            lote_out[b, y, x, 1] = uint8(suma_g[nivel_ganador] / max_votos)
-            lote_out[b, y, x, 2] = uint8(suma_b[nivel_ganador] / max_votos)
+            frame_out[y, x, 0] = uint8(suma_r[nivel_ganador] / max_votos)
+            frame_out[y, x, 1] = uint8(suma_g[nivel_ganador] / max_votos)
+            frame_out[y, x, 2] = uint8(suma_b[nivel_ganador] / max_votos)

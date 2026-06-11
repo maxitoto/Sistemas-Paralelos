@@ -71,7 +71,7 @@ def ejecutar(work_path, temp_frames_origin_dir, temp_frames_filtered_dir, batch_
     return t_total_disco, t_computo1, t_computo2, t_transfer_out, t_transfer_in
 
 def main():
-    input_dir, output_dir, temp_audio_dir, tools_dir, temp_video_mute_dir, temp_frames_origin_dir, temp_frames_filtered_dir, resultados_dir, batch_size, batch_size_gpu, target_fps, codec_salida, name, time_baseline, baseline_method, pipeline, save_baseline, save_estimate_baseline = obtener_variables()
+    input_dir, output_dir, temp_audio_dir, tools_dir, temp_video_mute_dir, temp_frames_origin_dir, temp_frames_filtered_dir, resultados_dir, batch_size, batch_size_gpu, target_fps, codec_salida, name, time_baseline, baseline_method, pipeline, save_baseline, save_estimate_baseline, clean_temp = obtener_variables()
 
     #== ayuda de ia
     os.makedirs(temp_video_mute_dir, exist_ok=True)
@@ -123,8 +123,10 @@ def main():
 
     clear_out(temp_video_mute_dir)
     clear_out(temp_audio_dir)
-    clear_out(temp_frames_origin_dir)
     clear_out(temp_frames_filtered_dir)
+    if(clean_temp):
+        clear_out(temp_frames_origin_dir)
+    
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 import numpy as np
 from tools.shared.interfaces import IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Computo, IFase4TransferenciaOut, IFase5Auxiliar
 from tools.shared.maths import oleo
+from tqdm import tqdm
 
 class Pipeline(IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Computo, IFase4TransferenciaOut, IFase5Auxiliar):
     
@@ -21,10 +22,10 @@ class Pipeline(IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Computo
         
         batch_size, alto, ancho, canales = lote_device.shape
         
-        lote_salida = np.zeros((batch_size, alto, ancho, canales), dtype=np.float32)
+        # Optimizamos memoria inicializando directamente en uint8
+        lote_salida = np.zeros((batch_size, alto, ancho, canales), dtype=np.uint8)
     
-
-        for b in range(batch_size):
+        for b in tqdm(range(batch_size), desc="Procesando Secuencial", leave=False):
             frame = lote_device[b]
             for y in range(alto):
                 for x in range(ancho):
@@ -35,9 +36,8 @@ class Pipeline(IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Computo
                     lote_salida[b, y, x, 1] = g_final
                     lote_salida[b, y, x, 2] = b_final
 
-        return lote_salida.astype(np.uint8), is_contable
+        return lote_salida, is_contable
             
-
     def procesarComputo2(self, lote_device):
         is_contable = False 
         return lote_device, is_contable

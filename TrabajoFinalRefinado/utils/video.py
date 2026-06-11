@@ -1,4 +1,4 @@
-import cv2, os, subprocess, glob, shutil, numpy as np
+import cv2, os, subprocess, glob, shutil, json,numpy as np
 try:
     import ffmpeg
     HAS_FFMPEG_LIB = True
@@ -11,15 +11,29 @@ def open_video(input_dir):
     return cap
 
 def split_video(video, temp_frames_origin_dir):
+    
     if not os.path.exists(temp_frames_origin_dir):
         os.makedirs(temp_frames_origin_dir)
+        
+    frames_en_cache = glob.glob(os.path.join(temp_frames_origin_dir, "*.jpg"))
+    cantidad_cache = len(frames_en_cache)
 
+    if cantidad_cache > 0:
+        with open("config.json", "r", encoding="utf-8") as f:
+            config = json.load(f)
+            filteredPath = config["paths"]["temp_frames_filtered_dir"]
+            
+        clear_out(filteredPath)
+        print(f"⏩ [Video] Se encontraron {cantidad_cache} frames en cache. Saltando extracción.")
+        return cantidad_cache
+
+    print("🎬 [Video] No hay caché. Iniciando extracción de frames...")
     frames_guardados = 0
     
     while True:
         ret, frame = video.read()
         if not ret: 
-            break  # El video terminó
+            break
             
         frame_name = f"frame_{frames_guardados:05d}.jpg"
         frame_path = os.path.join(temp_frames_origin_dir, frame_name)
@@ -122,7 +136,7 @@ def extract_audio(ruta_video, temp_audio_dir):
             
     else:
         comando = [
-            './ffmpeg', '-y', 
+            'ffmpeg', '-y', 
             '-i', ruta_video, 
             '-vn',               
             '-c:a', 'aac',       # Forzar codec AAC
@@ -134,25 +148,38 @@ def extract_audio(ruta_video, temp_audio_dir):
         except subprocess.CalledProcessError:
             print("⚠️ [Audio] Falló la extracción con ejecutable (Quizás el video no tiene sonido).")
 
-def merge_audio(temp_video_mute_dir, temp_audio_dir, output_dir):
-    command = [
-        './ffmpeg',
-        '-y',                      # Sobrescribe el archivo si ya existe (muy recomendado)
-        '-i', temp_video_mute_dir,      # Video mudo de entrada
-        '-i', temp_audio_dir,      # Audio extraído de entrada
-        '-c:v', 'copy',            
-        '-c:a', 'aac',             
-        '-strict', 'experimental', 
-        '-map', '0:v:0',           
-        '-map', '1:a:0',           
-        output_dir           # Archivo final resultante
-    ]
+def merge_audio(archivo_video_mudo, archivo_audio_temp, archivo_video_final):
+    import shutil
+    import subprocess
+    import os
+    
+    if not os.path.exists(archivo_video_mudo):
+        print("❌ [Audio] Error fatal: No existe un video procesado para ensamblar. Abortando.")
+        return
 
+    if not os.path.exists(archivo_audio_temp):
+        print("⚠️ [Audio] No hay pista de audio. Guardando video final sin sonido.")
+        shutil.copy(archivo_video_mudo, archivo_video_final)
+        return
+
+    command = [
+        "ffmpeg", "-y",
+        "-i", archivo_video_mudo,
+        "-i", archivo_audio_temp,
+        "-c:v", "copy",
+        "-c:a", "aac",
+        archivo_video_final
+    ]
+    
     try:
-        subprocess.run(command, check=True)
-        print(f"Audio replaced successfully. Output video: {output_dir}")
-    except subprocess.CalledProcessError as e:
-        print(f"Error during audio replacement: {e}")
+        subprocess.run(command, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        print("🎵 [Audio] Audio fusionado con éxito.")
+    except FileNotFoundError:
+        print("⚠️ [Audio] FFmpeg no encontrado en Windows. Guardando video final mudo.")
+        shutil.copy(archivo_video_mudo, archivo_video_final)
+    except Exception as e:
+        print(f"⚠️ [Audio] Falló la fusión de audio: {e}. Guardando video final mudo.")
+        shutil.copy(archivo_video_mudo, archivo_video_final)
 
 def clear_out(temp_dir):
     try:

@@ -1,12 +1,12 @@
 {
     "benchmark_settings": {
-        "time_baseline": 0.0,
+        "time_baseline": 4520.563,
         "baseline_method": "secuencial"
     },
     "video_settings": {
-        "batch_size": 30,
-        "batch_size_gpu": 30,
-        "target_fps": 20.0,
+        "batch_size": 64,
+        "batch_size_gpu": 64,
+        "target_fps": 60.0,
         "codec_salida": "mp4v",
         "name": "video1.mp4"
     },
@@ -23,6 +23,12 @@
     "profiles": {
         "debug": {},
         "all": {
+          "numb8":"numba_gpu.t8_8",
+          "num16":"numba_gpu.t16_16",
+          "pytorchcpu":"pytorch_cpu",
+          "pytorchgpu":"pytorch_gpu"
+        },
+        "all_with_errors": {
             "numb8": "numba_gpu.t8_8",
             "num16": "numba_gpu.t16_16",
             "num8128": "numba_gpu.t8_128",
@@ -33,8 +39,19 @@
         "cpu": {
             "torchcpu": "pytorch_cpu"
         },
+        "gpu_with_errors": {
+            "torchgpu": "pytorch_gpu",
+            "numb8": "numba_gpu.t8_8",
+            "num16": "numba_gpu.t16_16",
+            "num8128": "numba_gpu.t8_128",
+            "num1288": "numba_gpu.t128_8"
+        },
         "gpu": {
             "torchgpu": "pytorch_gpu",
+            "numb8": "numba_gpu.t8_8",
+            "num16": "numba_gpu.t16_16"
+        },
+        "numba_with_errors": {
             "numb8": "numba_gpu.t8_8",
             "num16": "numba_gpu.t16_16",
             "num8128": "numba_gpu.t8_128",
@@ -42,13 +59,29 @@
         },
         "numba": {
             "numb8": "numba_gpu.t8_8",
-            "num16": "numba_gpu.t16_16",
-            "num8128": "numba_gpu.t8_128",
-            "num1288": "numba_gpu.t128_8"
+            "num16": "numba_gpu.t16_16"
         },
         "pytorch": {
             "torchcpu": "pytorch_cpu",
             "torchgpu": "pytorch_gpu"
+        },
+        "pytorch_gpu": {
+            "torchgpu": "pytorch_gpu"
+        },
+        "pytorch_cpu": {
+            "torchcpu": "pytorch_cpu"
+        },
+        "numba_gpu_8_8": {
+            "numb8": "numba_gpu.t8_8"
+        },
+        "numba_gpu_16_16": {
+            "num16": "numba_gpu.t16_16"
+        },
+        "numba_gpu_8_128": {
+            "num8128": "numba_gpu.t8_128"
+        },
+        "numba_gpu_128_8": {
+            "num1288": "numba_gpu.t128_8"
         }
     }
 }
