@@ -1,5 +1,5 @@
 from tools.shared.interfaces import IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Computo, IFase4TransferenciaOut, IFase5Auxiliar
-from tools.shared.mathstorch import oleo
+from tools.shared.mathstorch import aberracionCromatica
 
 import torch
 import torch.nn.functional as F
@@ -19,7 +19,7 @@ class Pipeline(IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Computo
     def calentar(self):
         # Usamos B=1 explícitamente para el calentamiento
         dummy_tensor = torch.zeros((1, 3, 10, 10), dtype=torch.float16, device=self.device)
-        _ = oleo(dummy_tensor)
+        _ = aberracionCromatica(dummy_tensor)
         torch.cuda.synchronize()
 
     def host_to_device(self, lote_host):
@@ -38,9 +38,9 @@ class Pipeline(IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Computo
 
         # Iteramos frame por frame para evitar el colapso de F.unfold
         for b in tqdm(range(B), desc="Procesando PyTorch GPU", leave=False):
-            
+
             frame_actual = lote_device[b : b + 1]
-            frame_procesado = oleo(frame_actual)
+            frame_procesado = aberracionCromatica(frame_actual)
             lote_salida[b : b + 1] = frame_procesado
 
         torch.cuda.synchronize()

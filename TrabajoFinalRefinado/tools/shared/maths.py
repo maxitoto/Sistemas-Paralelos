@@ -1,4 +1,4 @@
-from tools.shared.const.parameters import niveles, radio
+from tools.shared.const.parameters import niveles, radio, desplazamiento
 
 def oleo(frame, y, x):
     """
@@ -46,5 +46,20 @@ def oleo(frame, y, x):
     r_final = suma_r[nivel_ganador] / max_votos
     g_final = suma_g[nivel_ganador] / max_votos
     b_final = suma_b[nivel_ganador] / max_votos
+    
+    return r_final, g_final, b_final
+
+def aberracionCromatica(frame, y, x):
+
+    alto, ancho, _ = frame.shape
+    
+    # Calculamos de dónde vamos a robar el color rojo y el azul
+    x_rojo = max(0, x - desplazamiento)
+    x_azul = min(ancho - 1, x + desplazamiento)
+    
+    # El Rojo viene de la izquierda, el Verde del centro, el Azul de la derecha
+    r_final = frame[y, x_rojo, 0]
+    g_final = frame[y, x, 1]
+    b_final = frame[y, x_azul, 2]
     
     return r_final, g_final, b_final

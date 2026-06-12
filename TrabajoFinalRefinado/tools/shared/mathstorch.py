@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 
 # Usamos el radio global, sin trampas para PyTorch
-from tools.shared.const.parameters import niveles, radio
+from tools.shared.const.parameters import niveles, radio, desplazamiento
 
 def oleo(chunk_tensor):
 
@@ -43,3 +43,30 @@ def oleo(chunk_tensor):
     final_color = final_color_sum / max_votes
     
     return final_color.view(B, C, H, W)
+
+
+def aberracionCromatica(chunk_tensor):
+    
+    # Separamos los 3 canales: [Batch, Canales, Alto, Ancho]
+    R = chunk_tensor[:, 0:1, :, :]
+    G = chunk_tensor[:, 1:2, :, :]
+    B = chunk_tensor[:, 2:3, :, :]
+    
+    # ====================================================================
+    # Equivalente vectorial a x_rojo = max(0, x - desplazamiento):
+    # Rellenamos la izquierda copiando el borde (replicate) y cortamos la derecha
+    # ====================================================================
+    R_pad = F.pad(R, (desplazamiento, 0, 0, 0), mode='replicate')
+    R_shift = R_pad[:, :, :, :-desplazamiento]
+    
+    # ====================================================================
+    # Equivalente vectorial a x_azul = min(ancho - 1, x + desplazamiento):
+    # Rellenamos la derecha copiando el borde y cortamos la izquierda
+    # ====================================================================
+    B_pad = F.pad(B, (0, desplazamiento, 0, 0), mode='replicate')
+    B_shift = B_pad[:, :, :, desplazamiento:]
+    
+    # Juntamos los 3 canales de nuevo (R_desplazado, Verde_intacto, B_desplazado)
+    final_color = torch.cat((R_shift, G, B_shift), dim=1)
+    
+    return final_color

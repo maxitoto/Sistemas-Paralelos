@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 from tools.shared.interfaces import IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Computo, IFase4TransferenciaOut, IFase5Auxiliar
-from tools.shared.mathstorch import oleo
+from tools.shared.mathstorch import aberracionCromatica
 from tqdm import tqdm
 
 class Pipeline(IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Computo, IFase4TransferenciaOut, IFase5Auxiliar):
@@ -32,7 +32,7 @@ class Pipeline(IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Computo
         for b in tqdm(range(B), desc="Procesando PyTorch", leave=False):
             
             frame_actual = lote_device[b : b + 1]
-            frame_procesado = oleo(frame_actual)
+            frame_procesado = aberracionCromatica(frame_actual)
             lote_salida[b : b + 1] = frame_procesado
 
         return lote_salida, is_contable

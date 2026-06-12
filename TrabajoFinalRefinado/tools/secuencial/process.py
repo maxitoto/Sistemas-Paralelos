@@ -1,6 +1,6 @@
 import numpy as np
 from tools.shared.interfaces import IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Computo, IFase4TransferenciaOut, IFase5Auxiliar
-from tools.shared.maths import oleo
+from tools.shared.maths import aberracionCromatica
 from tqdm import tqdm
 
 class Pipeline(IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Computo, IFase4TransferenciaOut, IFase5Auxiliar):
@@ -30,7 +30,7 @@ class Pipeline(IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Computo
             for y in range(alto):
                 for x in range(ancho):
                     
-                    r_final, g_final, b_final = oleo(frame, y, x)
+                    r_final, g_final, b_final = aberracionCromatica(frame, y, x)
 
                     lote_salida[b, y, x, 0] = r_final
                     lote_salida[b, y, x, 1] = g_final

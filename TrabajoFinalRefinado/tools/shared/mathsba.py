@@ -1,5 +1,5 @@
 import math
-from tools.shared.const.parameters import niveles, radio
+from tools.shared.const.parameters import niveles, radio, desplazamiento
 from numba import cuda, int32, float32, uint8
 
 @cuda.jit
@@ -66,3 +66,23 @@ def oleo(frame_in, frame_out):
             frame_out[y, x, 0] = uint8(suma_r[nivel_ganador] / max_votos)
             frame_out[y, x, 1] = uint8(suma_g[nivel_ganador] / max_votos)
             frame_out[y, x, 2] = uint8(suma_b[nivel_ganador] / max_votos)
+
+
+@cuda.jit
+def aberracionCromatica(frame_in, frame_out):
+
+    alto = frame_in.shape[0]
+    ancho = frame_in.shape[1]
+
+    x, y = cuda.grid(2) 
+    
+    # Escudo de seguridad de la malla
+    if x < ancho and y < alto:
+        
+        x_rojo = max(0, x - desplazamiento)
+        x_azul = min(ancho - 1, x + desplazamiento)
+        
+        # Asignamos directamente los píxeles (Complejidad O(1) - Cero memoria extra)
+        frame_out[y, x, 0] = frame_in[y, x_rojo, 0]
+        frame_out[y, x, 1] = frame_in[y, x, 1]
+        frame_out[y, x, 2] = frame_in[y, x_azul, 2]

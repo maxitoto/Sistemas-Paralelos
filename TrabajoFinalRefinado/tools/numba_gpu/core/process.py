@@ -1,17 +1,27 @@
 import math
 import numpy as np
 from numba import cuda
-from tools.shared.mathsba import oleo
+from tools.shared.mathsba import aberracionCromatica
 from tools.shared.interfaces import IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Computo, IFase4TransferenciaOut, IFase5Auxiliar
 from tqdm import tqdm
+import warnings
+from numba.core.errors import NumbaPerformanceWarning
 
+warnings.simplefilter('ignore', category=NumbaPerformanceWarning)
 class BasePipeline(IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Computo, IFase4TransferenciaOut, IFase5Auxiliar):
 
     def __init__(self, config):
         self.filtro_elegido = config["video_settings"].get("filter_type", "oleo")
         
     def calentar(self):
-        pass
+        dummy_in = cuda.to_device(np.zeros((10, 10, 3), dtype=np.uint8))
+        dummy_out = cuda.device_array((10, 10, 3), dtype=np.uint8)
+        
+        tpb_x, tpb_y, _ = self.threadsperblock
+        
+        aberracionCromatica[(1, 1), (tpb_x, tpb_y)](dummy_in, dummy_out)
+        
+        cuda.synchronize()
 
     def host_to_device(self, lote_host):
         is_contable = True 
@@ -42,7 +52,7 @@ class BasePipeline(IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Com
             frame_salida = lote_salida_device[b]
             
             # Lanzamos el kernel 2D para este frame individual
-            oleo[blocks_2d, threads_2d](frame_actual, frame_salida)
+            aberracionCromatica[blocks_2d, threads_2d](frame_actual, frame_salida)
         
         # Barrera de sincronización obligatoria
         cuda.synchronize()
