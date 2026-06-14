@@ -37,10 +37,7 @@ def oleo(chunk_tensor, radio):
     # 4. Cálculo final de la pincelada
     mask_exp = mask.unsqueeze(1) 
     
-    # === LA CORRECCIÓN IN-PLACE ===
-    windows.masked_fill_(~mask_exp, 0.0)
-    final_color_sum = windows.sum(dim=2) 
-    # ==============================
+    final_color_sum = (windows * mask_exp).sum(dim=2) 
 
     max_votes = mask.sum(dim=1).clamp(min=1).unsqueeze(1) 
     

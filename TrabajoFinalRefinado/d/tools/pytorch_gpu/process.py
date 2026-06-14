@@ -20,15 +20,15 @@ class Pipeline(IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Computo
     def calentar(self):
         # Usamos B=1 explícitamente para el calentamiento
         dummy_tensor = torch.zeros((1, 3, 10, 10), dtype=torch.float16, device=self.device)
-        _ = aberracionCromatica(dummy_tensor)
-        #_ = oleo(dummy_tensor, radioTorch_gpu)
+        #_ = aberracionCromatica(dummy_tensor)
+        _ = oleo(dummy_tensor, radioTorch_cpu)
         torch.cuda.synchronize()
 
     def host_to_device(self, lote_host):
         is_contable = True 
         
         # Pasamos a Media Precisión (16 bits) para ahorrar VRAM
-        lote_device = torch.from_numpy(lote_host).permute(0, 3, 1, 2).to(self.device)
+        lote_device = torch.from_numpy(lote_host).half().permute(0, 3, 1, 2).to(self.device)
 
         return lote_device, is_contable
 
@@ -36,23 +36,21 @@ class Pipeline(IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Computo
         is_contable = True
         B, C, H, W = lote_device.shape
         
-        # El lote de salida ahora también se crea en formato de 1 Byte
         lote_salida = torch.empty_like(lote_device)
 
-        with torch.no_grad():
-            for b in tqdm(range(B), desc="Procesando PyTorch CPU", leave=False):
+        with torch.no_grad(): 
+            
+            # Envolvemos el range con tqdm
+            for b in tqdm(range(B), desc="Procesando PyTorch GPU", leave=False):
+                frame_actual = lote_device[b : b + 1]
                 
-                # RECIÉN AQUÍ extraemos el frame de turno y lo pasamos a flotante
-                # Solo gasta 100 MB en lugar de 6.3 GB
-                frame_actual = lote_device[b : b + 1].float()
+                #frame_procesado = aberracionCromatica(frame_actual, radioTorch_gpu)
+                frame_procesado = oleo(frame_actual, radioTorch_cpu) 
                 
-                frame_procesado = aberracionCromatica(frame_actual)
-                #frame_procesado = oleo(frame_actual, radioTorch_gpu)
-                
-                # Lo convertimos de regreso a Byte para guardarlo en la salida
-                lote_salida[b : b + 1] = frame_procesado.clamp(0, 255).byte()
+                lote_salida[b : b + 1] = frame_procesado
 
         torch.cuda.synchronize()
+
         return lote_salida, is_contable
 
     def procesarComputo2(self, lote_device):

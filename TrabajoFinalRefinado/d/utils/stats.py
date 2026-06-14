@@ -1,7 +1,6 @@
 import os
 import platform
 import json
-import sys
 
 try:
     from numba import cuda
@@ -61,31 +60,20 @@ def stats(t_total_disco, t_computo1, t_computo2, t_transfer_out, t_transfer_in, 
     t_total_parcial = t_computo_total + t_total_disco
     t_global = t_total_parcial + t_transfer_in + t_transfer_out
     
-    # =========================================================================
-    # EL PARCHE MAESTRO: Leemos la consola a la fuerza por si benchmark.py falla
-    # =========================================================================
-    is_saving = (
-        _config.get("save_baseline") or 
-        _config.get("save_estimate_baseline") or 
-        "--save_estimate_baseline" in sys.argv or 
-        "--save_baseline" in sys.argv
-    )
+    is_saving = _config["save_baseline"] or _config["save_estimate_baseline"]
 
     if is_saving and "secuencial" in nombre_metodo.lower():
         
         _config["time_baseline"] = t_global
         speedup = 1.0
-        print(f"\n🔄 [Stats] ¡Nuevo Baseline Registrado en RAM!: {t_global:.4f}s")
+        print(f"🔄 [Stats] ¡Nuevo Baseline Registrado en RAM!: {t_global:.4f}s")
         
         try:
             with open("config.json", "r", encoding="utf-8") as f:
                 json_data = json.load(f)
                 
-            # Buscador inteligente: Lo guarda donde sea que exista la clave
-            if "benchmark_settings" in json_data:
-                json_data["benchmark_settings"]["time_baseline"] = round(t_global, 4)
-            else:
-                json_data["time_baseline"] = round(t_global, 4)
+            # Modificamos el valor en el diccionario
+            json_data["benchmark_settings"]["time_baseline"] = round(t_global, 4)
             
             # Guardamos el archivo sobreescribiéndolo
             with open("config.json", "w", encoding="utf-8") as f:
@@ -93,11 +81,10 @@ def stats(t_total_disco, t_computo1, t_computo2, t_transfer_out, t_transfer_in, 
                 
             print("💾 [Stats] ¡Baseline guardado permanentemente en config.json!")
         except Exception as e:
-            print(f"⚠️ [Stats] ERROR CRÍTICO al escribir config.json: {e}")
-            
+            print(f"⚠️ [Stats] No se pudo guardar el baseline en config.json: {e}")
+        # ----------------------------------------------
     else:
-        # Cálculo de los demás motores (Numba, PyTorch)
-        if _config.get("time_baseline") and _config["time_baseline"] > 0 and t_global > 0:
+        if _config["time_baseline"] and _config["time_baseline"] > 0 and t_global > 0:
             speedup = _config["time_baseline"] / t_global
         else:
             speedup = 0.0

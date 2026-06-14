@@ -1,7 +1,7 @@
 # Filtro olio
 niveles = 4
 radio_sec = 2
-radioNumba = 16 #2 para comparar con todos por igual y 16 para ver un efecto mas explicito
+radioNumba = 2
 radioTorch_cpu = 2
 radioTorch_gpu = 2
 
@@ -18,4 +18,4 @@ En tu archivo de PyTorch, el bucle ahora aísla 1 solo frame correctamente. Pero
 
 
 # Filtro aberracion cromatica
-desplazamiento = 32
+desplazamiento = 25

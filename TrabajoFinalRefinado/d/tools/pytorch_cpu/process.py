@@ -18,9 +18,9 @@ class Pipeline(IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Computo
     def host_to_device(self, lote_host):
         is_contable = False 
         
-        # EL SECRETO: Quitamos el .float() para mantener el lote en uint8 (1 Byte)
-        # Esto reduce el consumo estático de 6.3 GB a solo 1.5 GB.
-        lote_device = torch.from_numpy(lote_host).permute(0, 3, 1, 2)
+        # IMPORTANTE: En CPU mantenemos .float() (32 bits) porque 
+        # los procesadores tradicionales suelen dar error con .half() en F.unfold
+        lote_device = torch.from_numpy(lote_host).float().permute(0, 3, 1, 2)
 
         return lote_device, is_contable
 
@@ -28,21 +28,18 @@ class Pipeline(IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Computo
         is_contable = True
         B, C, H, W = lote_device.shape
         
-        # El lote de salida ahora también se crea en formato de 1 Byte
         lote_salida = torch.empty_like(lote_device)
 
+        # ==========================================================
+        # ESCUDO DE MEMORIA: Apaga el historial de gradientes
+        # ==========================================================
         with torch.no_grad():
             for b in tqdm(range(B), desc="Procesando PyTorch CPU", leave=False):
                 
-                # RECIÉN AQUÍ extraemos el frame de turno y lo pasamos a flotante
-                # Solo gasta 100 MB en lugar de 6.3 GB
-                frame_actual = lote_device[b : b + 1].float()
-                
-                frame_procesado = aberracionCromatica(frame_actual)
-                #frame_procesado = oleo(frame_actual, radioTorch_cpu)
-                
-                # Lo convertimos de regreso a Byte para guardarlo en la salida
-                lote_salida[b : b + 1] = frame_procesado.clamp(0, 255).byte()
+                frame_actual = lote_device[b : b + 1]
+                #frame_procesado = aberracionCromatica(frame_actual, radioTorch_cpu)
+                frame_procesado = oleo(frame_actual, radioTorch_cpu)
+                lote_salida[b : b + 1] = frame_procesado
 
         return lote_salida, is_contable
 

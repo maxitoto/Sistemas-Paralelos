@@ -19,8 +19,8 @@ class BasePipeline(IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Com
         
         tpb_x, tpb_y, _ = self.threadsperblock
         
-        aberracionCromatica[(1, 1), (tpb_x, tpb_y)](dummy_in, dummy_out)
-        #oleo[(1, 1), (tpb_x, tpb_y)](dummy_in, dummy_out)
+        #aberracionCromatica[(1, 1), (tpb_x, tpb_y)](dummy_in, dummy_out)
+        oleo[(1, 1), (tpb_x, tpb_y)](dummy_in, dummy_out)
 
         cuda.synchronize()
 
@@ -53,8 +53,8 @@ class BasePipeline(IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Com
             frame_salida = lote_salida_device[b]
             
             # Lanzamos el kernel 2D para este frame individual
-            aberracionCromatica[blocks_2d, threads_2d](frame_actual, frame_salida)
-            #oleo[blocks_2d, threads_2d](frame_actual, frame_salida)
+            #aberracionCromatica[blocks_2d, threads_2d](frame_actual, frame_salida)
+            oleo[blocks_2d, threads_2d](frame_actual, frame_salida)
         
         # Barrera de sincronización obligatoria
         cuda.synchronize()

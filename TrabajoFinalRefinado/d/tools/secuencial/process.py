@@ -31,8 +31,8 @@ class Pipeline(IFase0WarmUp, IFase1TransferenciaIn, IFase2Computo, IFase3Computo
             for y in range(alto):
                 for x in range(ancho):
                     
-                    r_final, g_final, b_final = aberracionCromatica(frame, y, x)
-                    #r_final, g_final, b_final = oleo(frame, y, x)
+                    #r_final, g_final, b_final = aberracionCromatica(frame, y, x)
+                    r_final, g_final, b_final = oleo(frame, y, x)
 
                     lote_salida[b, y, x, 0] = r_final
                     lote_salida[b, y, x, 1] = g_final

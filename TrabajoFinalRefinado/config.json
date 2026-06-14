@@ -1,6 +1,6 @@
 {
     "benchmark_settings": {
-        "time_baseline": 4520.563,
+        "time_baseline": 15420.7994,
         "baseline_method": "secuencial"
     },
     "video_settings": {
@@ -23,10 +23,10 @@
     "profiles": {
         "debug": {},
         "all": {
-          "numb8":"numba_gpu.t8_8",
-          "num16":"numba_gpu.t16_16",
-          "pytorchcpu":"pytorch_cpu",
-          "pytorchgpu":"pytorch_gpu"
+            "numb8": "numba_gpu.t8_8",
+            "num16": "numba_gpu.t16_16",
+            "pytorchcpu": "pytorch_cpu",
+            "pytorchgpu": "pytorch_gpu"
         },
         "all_with_errors": {
             "numb8": "numba_gpu.t8_8",
